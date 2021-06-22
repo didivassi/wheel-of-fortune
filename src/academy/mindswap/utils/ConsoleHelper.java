@@ -1,4 +1,4 @@
-package academy.mindswap;
+package academy.mindswap.utils;
 
 public class ConsoleHelper {
     private String lastLine = "";
