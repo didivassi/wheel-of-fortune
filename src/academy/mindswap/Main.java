@@ -14,6 +14,6 @@ public class Main {
         int num = 0;
         System.out.println("go away");
         num++;
-        System.out.println(num);
+        System.out.println(num + " this!");
     }
 }
