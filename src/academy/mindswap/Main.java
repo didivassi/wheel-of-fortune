@@ -16,4 +16,8 @@ public class Main {
         num++;
         System.out.println(num + " this!");
     }
+
+    public void method2(){
+
+    }
 }
