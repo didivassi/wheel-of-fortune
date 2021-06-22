@@ -11,6 +11,9 @@ public class Main {
     }
 
     public void method1(){
-
+        int num = 0;
+        System.out.println("go away");
+        num++;
+        System.out.println(num);
     }
 }
