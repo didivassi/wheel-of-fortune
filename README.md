@@ -22,7 +22,7 @@ SERVER
             if (game==null) { 
                 Game game = new Game();
                 gameThreads.submit(game)
-                game.run();começa o processo
+                    game.run();começa o processo
             }
            
             if(!game.isFull()){
