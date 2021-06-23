@@ -118,10 +118,7 @@ PLAYER
 
 
  
-    // Comunica com o socket do servidor
-
-    Socket playerSocket = new Socket();
-   
+    
     
    
     
