@@ -15,6 +15,11 @@ public class Main {
         System.out.println("go away");
         num++;
         System.out.println(num + " this!");
+
+        int[] scores= {1,2,3};
+
+        System.out.println(scores[0]);
+
     }
 
     public void method2(){
