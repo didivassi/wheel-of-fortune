@@ -1,36 +1,62 @@
 package academy.mindswap.game;
 
-import academy.mindswap.player.Player;
-
+import java.io.PrintWriter;
 import java.net.Socket;
-import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
-public class Game implements Runnable {
+import static academy.mindswap.messages.Messages.DEFAULT_NAME;
+
+public class Game {
 
     private static final int MAX_NUM_OF_PLAYERS = 3;
 
-    private ArrayList <Socket> listOfPlayers;
-    private int[] playersScore;
+    private List<PlayerHandler> listOfPlayers;
+    private ExecutorService service;
 
-    public Game() {
+    public void acceptPlayer(Socket playerSocket) {
+        int numberOfConnectios = 0;
+        service = Executors.newFixedThreadPool(3);
+        service.submit(new PlayerHandler(playerSocket, DEFAULT_NAME + ++numberOfConnectios));
+    }
+    public void addPlayerToList(PlayerHandler playerHandler) {
+        listOfPlayers.add(playerHandler);
+        playerHandler.send("Welcome to game!");
+        //broadcast(playerHandler.getName(), )
 
     }
-
     public boolean isFull() {
         return listOfPlayers.size() == MAX_NUM_OF_PLAYERS;
     }
-    public void addPlayers(Socket playerSocket) {
-        listOfPlayers.add(playerSocket);
-    }
-
-    @Override
-    public void run() {
-
-    }
-
-    /*public String getName() {
-        return
+    /*public void spinWheel(ConsoleHelper animate) {
+        animate ADICIONAR A CLASS ANIMATE
     }*/
+
+
+   public class PlayerHandler implements Runnable {
+
+        private String name;
+        private Socket playerSocket;
+        private PrintWriter out;
+
+
+        public PlayerHandler (Socket playerSocket, String name) {
+            this.playerSocket = playerSocket;
+            this.name = name;
+        }
+
+       @Override
+       public void run() {
+           addPlayerToList(this);
+       }
+       public void send(String message) {
+            out.print(message);
+       }
+       public String getName() {
+            return name;
+       }
+   }
 
 
     /*START()

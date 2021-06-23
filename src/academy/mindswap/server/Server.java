@@ -56,7 +56,7 @@ public class Server {
                 createGame();
             }
             if(getAvailableGame().isPresent()){
-               getAvailableGame().get().addPlayers(serverSocket.accept());
+               getAvailableGame().get().acceptPlayer(serverSocket.accept());
             }
         }
     }
@@ -68,7 +68,7 @@ public class Server {
      */
     private void createGame() throws RejectedExecutionException {
         Game game=new Game();
-        gamesService.submit(game);
+        //gamesService.submit(game);
         gameList.add(game);
     }
 
