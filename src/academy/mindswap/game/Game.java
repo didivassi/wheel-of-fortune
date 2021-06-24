@@ -1,6 +1,6 @@
 package academy.mindswap.game;
 
-import academy.mindswap.messages.Messages;
+import static academy.mindswap.messages.Messages.*;
 
 import java.io.PrintWriter;
 import java.net.Socket;
@@ -16,13 +16,13 @@ public class Game {
     private ExecutorService service;
 
     public void acceptPlayer(Socket playerSocket) {
-        int numberOfConnectios = 0;
+        int numberOfConnections = 0;
         service = Executors.newFixedThreadPool(3);
-        service.submit(new PlayerHandler(playerSocket, Messages.DEFAULT_NAME + ++numberOfConnectios));
+        service.submit(new PlayerHandler(playerSocket, DEFAULT_NAME + ++numberOfConnections));
     }
     public void addPlayerToList(PlayerHandler playerHandler) {
         listOfPlayers.add(playerHandler);
-        playerHandler.send(Messages.PLAYER_ENTERED_GAME);
+        playerHandler.send(PLAYER_ENTERED_GAME);
         //broadcast(playerHandler.getName(), )
 
     }
