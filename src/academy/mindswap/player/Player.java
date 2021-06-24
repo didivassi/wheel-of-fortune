@@ -34,7 +34,7 @@ public class Player {
 
     public void startPlay() throws IOException {
 
-        Socket playerSocket = new Socket(InetAddress.getLocalHost(), 8080);
+        playerSocket = new Socket(InetAddress.getLocalHost(), 8080);
 
         new Thread(new SendMessages()).start();
 
