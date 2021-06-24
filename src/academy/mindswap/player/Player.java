@@ -140,9 +140,10 @@ public class Player {
             try {
                 PrintWriter out = new PrintWriter(playerSocket.getOutputStream(), true);
                 while (!playerSocket.isClosed()) {
-                    if (isPlayerTurn) {
+                  //  if (isPlayerTurn) {
                         out.println(receiveMessagesFromConsole());
-                    }
+                    System.out.println();
+                   // }
                     setPlayerTurn(false);
                 }
             } catch (IOException e) {
