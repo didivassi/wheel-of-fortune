@@ -40,7 +40,7 @@ public class Game {
         //if(service.) // pesquisar documentação da thread para numero de
     }
 
-    public synchronized void  addPlayerToList(PlayerHandler playerHandler) throws InterruptedException {
+    public synchronized void  addPlayerToList(PlayerHandler playerHandler) {
         System.out.println("entered add players");
         listOfPlayers.add(playerHandler);
         playerHandler.send(PLAYER_ENTERED_GAME);
