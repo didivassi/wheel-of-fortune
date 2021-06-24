@@ -1,4 +1,4 @@
-package academy.mindswap.utils;
+package academy.mindswap.game;
 
 public class ConsoleHelper {
     private String lastLine = "";
@@ -22,17 +22,17 @@ public class ConsoleHelper {
     public void animate(String line) {
         switch (anim) {
             case 1:
-                print("[ \\ ] " + line);
+                print("[ Money ] " + line);
                 break;
             case 2:
-                print("[ | ] " + line);
+                print("[ Bankrupt ] " + line);
                 break;
             case 3:
-                print("[ / ] " + line);
+                print("[ Freeplay ] " + line);
                 break;
             default:
                 anim = 0;
-                print("[ - ] " + line);
+                print("[ Miss turn ] " + line);
         }
         anim++;
     }
