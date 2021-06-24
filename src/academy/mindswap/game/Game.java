@@ -4,6 +4,7 @@ import static academy.mindswap.messages.Messages.*;
 
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -15,6 +16,9 @@ public class Game {
     private List<PlayerHandler> listOfPlayers;
     private ExecutorService service;
 
+    public Game(){
+        listOfPlayers = new ArrayList<>();
+    }
     public void acceptPlayer(Socket playerSocket) {
         int numberOfConnections = 0;
         service = Executors.newFixedThreadPool(MAX_NUM_OF_PLAYERS);

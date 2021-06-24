@@ -26,11 +26,13 @@ public class Server {
      */
     public static void main(String[] args) {
         Server server = new Server();
-        int port;
+        int port =8080;
         try {
-            port = Integer.parseInt(args[0]);
+            if(args.length>0) {
+                port = Integer.parseInt(args[0]);
+            }
         }catch (NumberFormatException e){
-            port=8080;
+            System.out.println("Not valid Args");
         }
 
         try {
