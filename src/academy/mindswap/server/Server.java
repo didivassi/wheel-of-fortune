@@ -54,20 +54,22 @@ public class Server {
     public void start(int port) throws RejectedExecutionException, IOException {
         ServerSocket serverSocket = new ServerSocket(port);
         gamesService = Executors.newCachedThreadPool();
-
+        System.out.println("Server Started at port "+ port);
         while (serverSocket.isBound()) {
             if(!isGameAvailable()){
                 createGame();
-                System.out.println("game created");
+               // System.out.println("game created");
             }
             if(getAvailableGame().isPresent()){
+                //System.out.println("waitng for players");
                 getAvailableGame().get().acceptPlayer(serverSocket.accept());
-               /* try {
-                    Thread.sleep(40);
-                }catch (InterruptedException e){
-                }*/
+                //System.out.println("player added to game");
+               try{
+                   Thread.sleep(40);
+               }catch (InterruptedException e){
 
-               // System.out.println(getAvailableGame().get().listOfPlayers);
+               }
+
             }
         }
     }
@@ -78,7 +80,7 @@ public class Server {
      * @throws RejectedExecutionException the thread couldn't start
      */
     private void createGame() throws RejectedExecutionException {
-        Game game=new Game();
+        Game game=new Game(this);
         gameList.add(game);
         gamesService.execute(game);
     }
@@ -87,7 +89,7 @@ public class Server {
      * Goes through the gameList of the server and checks if there is a game that can accept a player
      * @return returns true if there is a game that can accept a player false if all games are full
      */
-    private boolean isGameAvailable(){
+    private synchronized boolean isGameAvailable(){
        return gameList.stream().anyMatch(Game::isAcceptingPlayers);
     }
 
@@ -95,8 +97,12 @@ public class Server {
      * Goes through the gameList of the server and returns an available game
      * @return returns the first available game that can accept a player
      */
-    private Optional<Game> getAvailableGame(){
+    private synchronized Optional<Game> getAvailableGame(){
         return gameList.stream().filter(Game::isAcceptingPlayers).findFirst();
+    }
+
+    public synchronized void removeGameFromList(Game game){
+        gameList.remove(game);
     }
 
 

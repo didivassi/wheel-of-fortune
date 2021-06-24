@@ -12,12 +12,10 @@ import java.net.Socket;
 public class Player {
 
     private Socket playerSocket;
-    public String name;
     public boolean isPlayerTurn;
 
     public Player() {
         this.playerSocket = null;
-
         isPlayerTurn = false;
     }
 
@@ -69,12 +67,15 @@ public class Player {
                 if (!buildingCommand) {
                     isCommand=checkCommandStart(letter);
                 }
-
                 if (isCommand) {
                     command.append(letter);
                     buildingCommand=checkCommandEnd(letter);
                     if (!buildingCommand) {
                         isPlayerTurn=canTalk(command.toString());
+                        if(isPlayerTurn){
+                            System.out.println("i can speak");
+                        }
+                        command.delete(0,command.length());
                     }
                 } else {
                     System.out.print(letter);
@@ -86,15 +87,16 @@ public class Player {
 
 
         private class SendMessages implements Runnable {
-            BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 
             @Override
             public void run() {
                 try {
                     PrintWriter out = new PrintWriter(playerSocket.getOutputStream(), true);
+
+                    BufferedReader inr = new BufferedReader(new InputStreamReader(System.in));
                     while (!playerSocket.isClosed()) {
+                        String message = inr.readLine();
                         if (isPlayerTurn) {
-                            String message = in.readLine();
                             out.println(message);
                         }
                         isPlayerTurn = false;
