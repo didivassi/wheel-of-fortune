@@ -33,6 +33,7 @@ public class Server {
             }
         }catch (NumberFormatException e){
             System.out.println("Not valid Args");
+            System.exit(1);
         }
 
         try {
@@ -60,6 +61,7 @@ public class Server {
             }
             if(getAvailableGame().isPresent()){
                getAvailableGame().get().acceptPlayer(serverSocket.accept());
+                System.out.println( "send player to game");
             }
         }
     }

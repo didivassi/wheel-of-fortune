@@ -1,13 +1,16 @@
 package academy.mindswap.game;
 
-import static academy.mindswap.messages.Messages.*;
 
+
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+import static academy.mindswap.messages.Messages.*;
 
 public class Game {
 
@@ -24,7 +27,8 @@ public class Game {
         service = Executors.newFixedThreadPool(MAX_NUM_OF_PLAYERS);
         service.submit(new PlayerHandler(playerSocket, DEFAULT_NAME + ++numberOfConnections));
     }
-    public void addPlayerToList(PlayerHandler playerHandler) {
+    public synchronized void  addPlayerToList(PlayerHandler playerHandler) {
+        System.out.println("entered add players");
         listOfPlayers.add(playerHandler);
         playerHandler.send(PLAYER_ENTERED_GAME);
         //broadcast(playerHandler.getName(), )
@@ -48,14 +52,21 @@ public class Game {
         public PlayerHandler (Socket playerSocket, String name) {
             this.playerSocket = playerSocket;
             this.name = name;
+            try {
+                out=new PrintWriter(playerSocket.getOutputStream(), true);
+            }
+           catch (IOException e){
+               System.out.println(e.getMessage());
+           }
         }
 
        @Override
        public void run() {
            addPlayerToList(this);
+           //TODO RECEIVE MESSAGES FROM PLAYER
        }
        public void send(String message) {
-            out.print(message);
+            out.println(message);
        }
        public String getName() {
             return name;
