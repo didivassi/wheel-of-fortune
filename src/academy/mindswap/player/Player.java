@@ -36,8 +36,8 @@ public class Player {
 
         Socket playerSocket = new Socket(InetAddress.getLocalHost(), 8080);
 
-        Thread sendingThread = new Thread(new SendMessages());
-        sendingThread.start();
+        new Thread(new SendMessages()).start();
+
 
         receiveMessageGame();
     }
@@ -49,41 +49,42 @@ public class Player {
 
         while (!playerSocket.isClosed()) {
             String gameMessage = in.readLine();
-            //   if (gameMessage.toLowerCase().startsWith("/talk now!")) {
-            isPlayerTurn = true;
+            if (gameMessage.toLowerCase().startsWith("/talk now!")) {
+                isPlayerTurn = true;
+                continue;
+            }
             System.out.println(gameMessage);
         }
-        playerSocket.close();
     }
 
 
-    public String receiveMessagesFromConsole() throws IOException {
+        public String receiveMessagesFromConsole() throws IOException {
 
-        String messageInLine = "";
-        BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+            String messageInLine = "";
+            BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 
-        while (isPlayerTurn) {
-            messageInLine = in.readLine();
+            while (isPlayerTurn) {
+                messageInLine = in.readLine();
+            }
+            return messageInLine;
         }
-        return messageInLine;
-    }
 
 
-    public class SendMessages implements Runnable {
+        private class SendMessages implements Runnable {
 
-        @Override
-        public void run() {
-            try {
-                PrintWriter out = new PrintWriter(playerSocket.getOutputStream(), true);
-                while (!playerSocket.isClosed()) {
-                    if (isPlayerTurn) {
-                        out.println(receiveMessagesFromConsole());
+            @Override
+            public void run() {
+                try {
+                    PrintWriter out = new PrintWriter(playerSocket.getOutputStream(), true);
+                    while (!playerSocket.isClosed()) {
+                        if (isPlayerTurn) {
+                            out.println(receiveMessagesFromConsole());
+                        }
+                        isPlayerTurn = false;
                     }
-                    isPlayerTurn = false;
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
             }
         }
     }
-}
