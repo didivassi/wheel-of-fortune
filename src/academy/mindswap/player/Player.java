@@ -73,7 +73,7 @@ public class Player {
      * @return true if command is /talk now
      */
     private boolean canTalk(String command) {
-        return command.equalsIgnoreCase("/talk now");
+        return command.equalsIgnoreCase(PERMITION_TO_TALK);
     }
 
     /**
