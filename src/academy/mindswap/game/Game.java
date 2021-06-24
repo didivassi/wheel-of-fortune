@@ -2,7 +2,9 @@ package academy.mindswap.game;
 
 
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -47,6 +49,7 @@ public class Game {
         private String name;
         private Socket playerSocket;
         private PrintWriter out;
+        private String message;
 
 
         public PlayerHandler (Socket playerSocket, String name) {
@@ -63,7 +66,16 @@ public class Game {
        @Override
        public void run() {
            addPlayerToList(this);
-           //TODO RECEIVE MESSAGES FROM PLAYER
+
+           try {
+               BufferedReader in = new BufferedReader(new InputStreamReader(playerSocket.getInputStream()));
+
+               while(!playerSocket.isClosed()){
+                   message = in.readLine();
+               }
+           } catch (IOException e) {
+               e.printStackTrace();
+           }
        }
        public void send(String message) {
             out.println(message);
