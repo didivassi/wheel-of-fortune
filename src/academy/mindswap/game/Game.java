@@ -85,7 +85,12 @@ public class Game implements Runnable {
         for (PlayerHandler playerHandler:listOfPlayers) {
 
             playerHandler.send(playerHandler.getName() + CHOOSE_A_LETTER);
+
             String playerAnswer=playerHandler.getAnswer();
+            while(!checkAnswer(playerAnswer)){
+                playerHandler.send(playerHandler.getName() + INVALID_LETTER);
+                playerAnswer = playerHandler.getAnswer();
+            }
             System.out.println(playerAnswer);
             //SPIN WHEEL
             //GET LETTER
@@ -114,7 +119,11 @@ public class Game implements Runnable {
                 .collect(Collectors.joining());
     }
 
-    public void checkChar(String playerAnswer){
+    public boolean checkAnswer(String playerAnswer){
+        if(playerAnswer.length() != 1){
+            return false;
+        }
+        return playerAnswer.toLowerCase().matches("[a-z&&[^aeiou]]");
 
     }
 

@@ -7,4 +7,5 @@ public class Messages {
     public static final String START_GAME = "The game will start!\n";
     public static final String SPIN_WHEEL = "The wheel is spinning, we wish you luck!\n";
     public static final String CHOOSE_A_LETTER = " Please choose a consonant: \n"+PERMISSION_TO_TALK;
+    public static final String INVALID_LETTER = " Please choose a valid consonant: \n"+PERMISSION_TO_TALK;
 }
