@@ -17,7 +17,7 @@ public class Game {
 
     public void acceptPlayer(Socket playerSocket) {
         int numberOfConnections = 0;
-        service = Executors.newFixedThreadPool(3);
+        service = Executors.newFixedThreadPool(MAX_NUM_OF_PLAYERS);
         service.submit(new PlayerHandler(playerSocket, DEFAULT_NAME + ++numberOfConnections));
     }
     public void addPlayerToList(PlayerHandler playerHandler) {
@@ -26,8 +26,8 @@ public class Game {
         //broadcast(playerHandler.getName(), )
 
     }
-    public boolean isFull() {
-        return listOfPlayers.size() == MAX_NUM_OF_PLAYERS;
+    public boolean isAvailable() {
+        return listOfPlayers.size() < MAX_NUM_OF_PLAYERS;
     }
     /*public void spinWheel(ConsoleHelper animate) {
         animate ADICIONAR A CLASS ANIMATE
