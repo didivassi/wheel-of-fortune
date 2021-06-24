@@ -27,7 +27,7 @@ public class Game {
         service = Executors.newFixedThreadPool(MAX_NUM_OF_PLAYERS);
         service.submit(new PlayerHandler(playerSocket, DEFAULT_NAME + ++numberOfConnections));
     }
-    public synchronized void  addPlayerToList(PlayerHandler playerHandler) {
+    public synchronized void  addPlayerToList(PlayerHandler playerHandler) throws InterruptedException {
         System.out.println("entered add players");
         listOfPlayers.add(playerHandler);
         playerHandler.send(PLAYER_ENTERED_GAME);
@@ -62,11 +62,16 @@ public class Game {
 
        @Override
        public void run() {
-           addPlayerToList(this);
+           try {
+               addPlayerToList(this);
+           } catch (InterruptedException e) {
+               e.printStackTrace();
+           }
            //TODO RECEIVE MESSAGES FROM PLAYER
        }
-       public void send(String message) {
-            out.println(message);
+       public void send(String message){
+            out.write(message);
+            out.flush();
        }
        public String getName() {
             return name;
