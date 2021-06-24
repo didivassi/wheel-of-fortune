@@ -16,9 +16,9 @@ public class Game {
     private ExecutorService service;
 
     public void acceptPlayer(Socket playerSocket) {
-        int numberOfConnectios = 0;
-        service = Executors.newFixedThreadPool(3);
-        service.submit(new PlayerHandler(playerSocket, DEFAULT_NAME + ++numberOfConnectios));
+        int numberOfConnections = 0;
+        service = Executors.newFixedThreadPool(MAX_NUM_OF_PLAYERS);
+        service.submit(new PlayerHandler(playerSocket, DEFAULT_NAME + ++numberOfConnections));
     }
     public void addPlayerToList(PlayerHandler playerHandler) {
         listOfPlayers.add(playerHandler);
