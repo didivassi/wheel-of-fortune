@@ -14,6 +14,7 @@ public class Server {
     private ExecutorService gamesService;
     private final List<Game> gameList;
 
+
     public Server() {
         gameList = new LinkedList<>();
     }
@@ -77,7 +78,7 @@ public class Server {
      * @return returns true if there is a game that can accept a player false if all games are full
      */
     private boolean isGameAvailable(){
-       return gameList.stream().anyMatch(game ->!game.isFull());
+       return gameList.stream().anyMatch(Game::isAvailable);
     }
 
     /**
@@ -85,7 +86,7 @@ public class Server {
      * @return returns the first available game that can accept a player
      */
     private Optional<Game> getAvailableGame(){
-        return gameList.stream().filter(game ->!game.isFull()).findFirst();
+        return gameList.stream().filter(Game::isAvailable).findFirst();
     }
 
 
