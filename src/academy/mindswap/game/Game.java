@@ -36,6 +36,7 @@ public class Game {
     }
 
     public void startGame(){
+        //
         //if(service.) // pesquisar documentação da thread para numero de
     }
 
