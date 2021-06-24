@@ -8,10 +8,14 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 
 //retornar frase
 // metodo frase
@@ -23,46 +27,70 @@ public class Game {
 
     private List<PlayerHandler> listOfPlayers;
     private ExecutorService service;
+    private List<String> gameQuotes;
 
-    public Game(){
+    public Game() {
         listOfPlayers = new ArrayList<>();
+        gameQuotes = new ArrayList<>();
     }
+
     public void acceptPlayer(Socket playerSocket) {
-        int numberOfConnections = 0;
+
         service = Executors.newFixedThreadPool(MAX_NUM_OF_PLAYERS);
-        service.submit(new PlayerHandler(playerSocket, DEFAULT_NAME + ++numberOfConnections));
+        service.submit(new PlayerHandler(playerSocket));
     }
 
-    public void startGame(){
-        //
-        //if(service.) // pesquisar documentação da thread para numero de
-    }
-
-    public void spinWheel() {
-
-    }
-
-    public synchronized void  addPlayerToList(PlayerHandler playerHandler) {
+    public synchronized void addPlayerToList(PlayerHandler playerHandler) throws IOException {
         System.out.println("entered add players");
         listOfPlayers.add(playerHandler);
+
         playerHandler.send(PLAYER_ENTERED_GAME);
-        //broadcast(playerHandler.getName(), )
+        checkIfCanStart();
 
     }
 
-    /**
-     * Check if the game have all players to start de game;
-     * @return true if the game don't have the max of players and false if the game have the players to start
-     */
+    public void broadcast(String message) {
+        listOfPlayers.forEach(player -> player.send(message));
+    }
+
+    public void checkIfCanStart() throws IOException {
+        if (!isAvailable()) {
+            startGame();
+        }
+    }
+
     public boolean isAvailable() {
-        return listOfPlayers.size() <= MAX_NUM_OF_PLAYERS;
+        return listOfPlayers.size() < MAX_NUM_OF_PLAYERS;
     }
     /*public void spinWheel(ConsoleHelper animate) {
         animate ADICIONAR A CLASS ANIMATE
     }*/
 
+    private void addQuoteToList() throws IOException {
+        Files.lines(Paths.get("resources/WheelOfFortune"))
+                .forEach(gameQuotes::add);
+    }
 
-   public class PlayerHandler implements Runnable {
+    private String generateRandomQuote() {
+        int index = (int) (Math.random() * gameQuotes.size());
+        return gameQuotes.get(index) + "\n";
+    }
+
+    public String prepareQuoteToGame() {
+        return Arrays.stream(generateRandomQuote().split(""))
+                .map(c -> c = c.equals(" ") ? c : "#")
+                .collect(Collectors.joining());
+    }
+
+    public void startGame() throws IOException {
+        addQuoteToList();
+        broadcast(START_GAME);
+        broadcast(prepareQuoteToGame());
+
+    }
+
+
+    public class PlayerHandler implements Runnable {
 
         private String name;
         private Socket playerSocket;
@@ -70,39 +98,43 @@ public class Game {
         private String message;
 
 
-        public PlayerHandler (Socket playerSocket, String name) {
+        public PlayerHandler(Socket playerSocket) {
             this.playerSocket = playerSocket;
-            this.name = name;
             try {
-                out=new PrintWriter(playerSocket.getOutputStream(), true);
+                out = new PrintWriter(playerSocket.getOutputStream(), true);
+            } catch (IOException e) {
+                System.out.println(e.getMessage());
             }
-           catch (IOException e){
-               System.out.println(e.getMessage());
-           }
         }
 
-       @Override
-       public void run() {
-           addPlayerToList(this);
+        @Override
+        public void run() {
 
-           try {
-               BufferedReader in = new BufferedReader(new InputStreamReader(playerSocket.getInputStream()));
+            try {
+                BufferedReader in = new BufferedReader(new InputStreamReader(playerSocket.getInputStream()));
+                addPlayerToList(this);
+                send(ASK_NAME);
+                send(PERMITION_TO_TALK);
+                name = in.readLine();
+                System.out.println(name);
 
-               while(!playerSocket.isClosed()){
-                   message = in.readLine();
-               }
-           } catch (IOException e) {
-               e.printStackTrace();
-           }
-       }
-       public void send(String message){
+                while (!playerSocket.isClosed()) {
+                    message = in.readLine();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        public void send(String message) {
             out.write(message);
             out.flush();
-       }
-       public String getName() {
+        }
+
+        public String getName() {
             return name;
-       }
-   }
+        }
+    }
 
 
     /*START()

@@ -1,11 +1,14 @@
 package academy.mindswap.player;
 
+import static academy.mindswap.messages.Messages.*;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.Socket;
+
+
 
 
 public class Player {
@@ -20,7 +23,6 @@ public class Player {
         this.name = name;
         isPlayerTurn = false;
     }
-
 
     public static void main(String[] args) {
         Player player1 = new Player("Ana");
@@ -53,7 +55,7 @@ public class Player {
     }
 
     private boolean canTalk(String command){
-        return command.equalsIgnoreCase("/talk now");
+        return command.equalsIgnoreCase(PERMITION_TO_TALK);
     }
 
     public void receiveMessageGame() throws IOException {
