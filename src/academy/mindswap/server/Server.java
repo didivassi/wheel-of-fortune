@@ -58,10 +58,16 @@ public class Server {
         while (serverSocket.isBound()) {
             if(!isGameAvailable()){
                 createGame();
+                System.out.println("game created");
             }
             if(getAvailableGame().isPresent()){
-               getAvailableGame().get().acceptPlayer(serverSocket.accept());
-                System.out.println( "send player to game");
+                getAvailableGame().get().acceptPlayer(serverSocket.accept());
+               /* try {
+                    Thread.sleep(40);
+                }catch (InterruptedException e){
+                }*/
+
+               // System.out.println(getAvailableGame().get().listOfPlayers);
             }
         }
     }
@@ -73,8 +79,8 @@ public class Server {
      */
     private void createGame() throws RejectedExecutionException {
         Game game=new Game();
-        //gamesService.submit(game);
         gameList.add(game);
+        gamesService.execute(game);
     }
 
     /**
@@ -82,7 +88,7 @@ public class Server {
      * @return returns true if there is a game that can accept a player false if all games are full
      */
     private boolean isGameAvailable(){
-       return gameList.stream().anyMatch(Game::isAvailable);
+       return gameList.stream().anyMatch(Game::isAcceptingPlayers);
     }
 
     /**
@@ -90,7 +96,7 @@ public class Server {
      * @return returns the first available game that can accept a player
      */
     private Optional<Game> getAvailableGame(){
-        return gameList.stream().filter(Game::isAvailable).findFirst();
+        return gameList.stream().filter(Game::isAcceptingPlayers).findFirst();
     }
 
 

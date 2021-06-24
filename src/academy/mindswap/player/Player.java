@@ -9,23 +9,20 @@ import java.net.InetAddress;
 import java.net.Socket;
 
 
-
-
 public class Player {
 
     private Socket playerSocket;
     public String name;
     public boolean isPlayerTurn;
 
-
-    public Player(String name) {
+    public Player() {
         this.playerSocket = null;
-        this.name = name;
+
         isPlayerTurn = false;
     }
 
     public static void main(String[] args) {
-        Player player1 = new Player("Ana");
+        Player player1 = new Player();
         try {
             player1.startPlay();
         } catch (IOException e) {
@@ -55,7 +52,7 @@ public class Player {
     }
 
     private boolean canTalk(String command){
-        return command.equalsIgnoreCase(PERMITION_TO_TALK);
+        return command.equalsIgnoreCase(PERMISSION_TO_TALK);
     }
 
     public void receiveMessageGame() throws IOException {
@@ -78,7 +75,6 @@ public class Player {
                     buildingCommand=checkCommandEnd(letter);
                     if (!buildingCommand) {
                         isPlayerTurn=canTalk(command.toString());
-                        System.out.print("command received "+command + isPlayerTurn);
                     }
                 } else {
                     System.out.print(letter);
@@ -88,19 +84,9 @@ public class Player {
     }
 
 
-        public String receiveMessagesFromConsole() throws IOException {
-
-            String messageInLine = "";
-            BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
-
-            while (isPlayerTurn) {
-                messageInLine = in.readLine();
-            }
-            return messageInLine;
-        }
-
 
         private class SendMessages implements Runnable {
+            BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 
             @Override
             public void run() {
@@ -108,7 +94,8 @@ public class Player {
                     PrintWriter out = new PrintWriter(playerSocket.getOutputStream(), true);
                     while (!playerSocket.isClosed()) {
                         if (isPlayerTurn) {
-                            out.println(receiveMessagesFromConsole());
+                            String message = in.readLine();
+                            out.println(message);
                         }
                         isPlayerTurn = false;
                     }

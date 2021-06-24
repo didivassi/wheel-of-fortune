@@ -21,32 +21,45 @@ import java.util.stream.Collectors;
 // metodo frase
 //split e replace por char
 // start game
-public class Game {
+public class Game implements Runnable {
 
     private static final int MAX_NUM_OF_PLAYERS = 3;
 
-    private List<PlayerHandler> listOfPlayers;
-    private ExecutorService service;
-    private List<String> gameQuotes;
+    public volatile   List<PlayerHandler> listOfPlayers;
+    private final List<String> gameQuotes;
+    private volatile boolean isGameEnded;
+    private volatile boolean isGameStarted;
 
     public Game() {
         listOfPlayers = new ArrayList<>();
         gameQuotes = new ArrayList<>();
+        isGameEnded=false;
+        isGameStarted=false;
     }
 
-    public void acceptPlayer(Socket playerSocket) {
+    @Override
+    public void run() {
+        while (!isGameEnded){
+            try {
+                if(!isGameStarted){
+                    checkIfCanStart();
+                   // System.out.println("cant start");
+                }
 
-        service = Executors.newFixedThreadPool(MAX_NUM_OF_PLAYERS);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public synchronized void acceptPlayer(Socket playerSocket) {
+        ExecutorService service = Executors.newFixedThreadPool(MAX_NUM_OF_PLAYERS);
         service.submit(new PlayerHandler(playerSocket));
     }
 
     public synchronized void addPlayerToList(PlayerHandler playerHandler) throws IOException {
-        System.out.println("entered add players");
         listOfPlayers.add(playerHandler);
-
-        playerHandler.send(PLAYER_ENTERED_GAME);
-        checkIfCanStart();
-
+        playerHandler.send(WELCOME_MESSAGE);
     }
 
     public void broadcast(String message) {
@@ -54,12 +67,12 @@ public class Game {
     }
 
     public void checkIfCanStart() throws IOException {
-        if (!isAvailable()) {
+        if (!isAcceptingPlayers()) {
             startGame();
         }
     }
 
-    public boolean isAvailable() {
+    public synchronized boolean isAcceptingPlayers() {
         return listOfPlayers.size() < MAX_NUM_OF_PLAYERS;
     }
     /*public void spinWheel(ConsoleHelper animate) {
@@ -83,11 +96,13 @@ public class Game {
     }
 
     public void startGame() throws IOException {
+        isGameStarted=true;
         addQuoteToList();
         broadcast(START_GAME);
         broadcast(prepareQuoteToGame());
-
     }
+
+
 
 
     public class PlayerHandler implements Runnable {
@@ -114,9 +129,7 @@ public class Game {
                 BufferedReader in = new BufferedReader(new InputStreamReader(playerSocket.getInputStream()));
                 addPlayerToList(this);
                 send(ASK_NAME);
-                send(PERMITION_TO_TALK);
                 name = in.readLine();
-                System.out.println(name);
 
                 while (!playerSocket.isClosed()) {
                     message = in.readLine();
