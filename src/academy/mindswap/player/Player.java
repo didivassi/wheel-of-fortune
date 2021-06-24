@@ -35,26 +35,54 @@ public class Player {
     public void startPlay() throws IOException {
 
         playerSocket = new Socket(InetAddress.getLocalHost(), 8080);
-
         new Thread(new SendMessages()).start();
-
-
         receiveMessageGame();
     }
 
+    private boolean checkCommandStart(char letter){
+      return  (letter=="/".charAt(0));
+    }
+
+    /**
+     *Checks if building command
+     * @param letter the character that is going to be tested
+     * @return true if is a character false if is newline \n or carriage-return \r\n
+     */
+    private boolean checkCommandEnd(char letter){
+        return  (String.valueOf(letter).matches("."));
+    }
+
+    private boolean canTalk(String command){
+        return command.equalsIgnoreCase("/talk now");
+    }
 
     public void receiveMessageGame() throws IOException {
 
         BufferedReader in = new BufferedReader(new InputStreamReader(playerSocket.getInputStream()));
+        StringBuilder command = new StringBuilder();
+        int value;
+        boolean buildingCommand=false;
+        boolean isCommand = false;
 
-        while (!playerSocket.isClosed()) {
-            String gameMessage = in.readLine();
-            if (gameMessage.toLowerCase().startsWith("/talk now!")) {
-                isPlayerTurn = true;
-                continue;
+            while ((value = in.read()) != -1) {
+                char letter = (char) value;
+
+                if (!buildingCommand) {
+                    isCommand=checkCommandStart(letter);
+                }
+
+                if (isCommand) {
+                    command.append(letter);
+                    buildingCommand=checkCommandEnd(letter);
+                    if (!buildingCommand) {
+                        isPlayerTurn=canTalk(command.toString());
+                        System.out.print("command received "+command + isPlayerTurn);
+                    }
+                } else {
+                    System.out.print(letter);
+                }
             }
-            System.out.println(gameMessage);
-        }
+
     }
 
 
