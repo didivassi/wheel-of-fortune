@@ -1,8 +1,10 @@
 package academy.mindswap.game;
 
+
+
 import static academy.mindswap.messages.Messages.*;
 
-
+import academy.mindswap.server.Server;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -21,47 +23,85 @@ import java.util.stream.Collectors;
 // metodo frase
 //split e replace por char
 // start game
-public class Game {
+public class Game implements Runnable {
 
     private static final int MAX_NUM_OF_PLAYERS = 3;
 
-    private List<PlayerHandler> listOfPlayers;
-    private ExecutorService service;
-    private List<String> gameQuotes;
+    private volatile List<PlayerHandler> listOfPlayers;
+    private final Server server;
+    private final List<String> gameQuotes;
+    private boolean isGameEnded;
+    private boolean isGameStarted;
+    private String quoteToGuess;
 
-    public Game() {
+    public Game(Server server) {
+        this.server=server;
         listOfPlayers = new ArrayList<>();
         gameQuotes = new ArrayList<>();
+        isGameEnded=false;
+        isGameStarted=false;
     }
 
-    public void acceptPlayer(Socket playerSocket) {
+    @Override
+    public void run() {
+        while (!isGameEnded){
+            try {
+                if(checkIfGameCanStart() && !isGameStarted){
+                    System.out.println("game started");
+                    startGame();
 
-        service = Executors.newFixedThreadPool(MAX_NUM_OF_PLAYERS);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            if(isGameStarted){
+                doTurn();
+            }
+
+
+        }
+        removeFromServerList();
+
+    }
+
+    public synchronized void acceptPlayer(Socket playerSocket) {
+        ExecutorService service = Executors.newFixedThreadPool(MAX_NUM_OF_PLAYERS);
         service.submit(new PlayerHandler(playerSocket));
     }
 
     public synchronized void addPlayerToList(PlayerHandler playerHandler) throws IOException {
-        System.out.println("entered add players");
         listOfPlayers.add(playerHandler);
-
-        playerHandler.send(PLAYER_ENTERED_GAME);
-        checkIfCanStart();
-
+        playerHandler.send(WELCOME_MESSAGE);
     }
 
     public void broadcast(String message) {
         listOfPlayers.forEach(player -> player.send(message));
     }
 
-    public void checkIfCanStart() throws IOException {
-        if (!isAvailable()) {
-            startGame();
+
+
+    public synchronized boolean isAcceptingPlayers() {
+        return listOfPlayers.size() < MAX_NUM_OF_PLAYERS;
+    }
+
+    private boolean checkIfGameCanStart(){
+      return !isAcceptingPlayers() && listOfPlayers.stream().noneMatch(playerHandler -> playerHandler.getName() == null);
+    }
+
+    private void doTurn(){
+        for (PlayerHandler playerHandler:listOfPlayers) {
+
+            playerHandler.send(playerHandler.getName() + " Choose a letter ");
+            playerHandler.send(PERMISSION_TO_TALK);
+            String playerAnswer=playerHandler.getAnswer();
+            System.out.println(playerAnswer);
+            //SPIN WHEEL
+            //GET LETTER
+            //SHOW RESULTS
+
         }
     }
 
-    public boolean isAvailable() {
-        return listOfPlayers.size() < MAX_NUM_OF_PLAYERS;
-    }
     /*public void spinWheel(ConsoleHelper animate) {
         animate ADICIONAR A CLASS ANIMATE
     }*/
@@ -77,26 +117,33 @@ public class Game {
     }
 
     public String prepareQuoteToGame() {
-        return Arrays.stream(generateRandomQuote().split(""))
+        return Arrays.stream(quoteToGuess.split(""))
                 .map(c -> c = c.equals(" ") ? c : "#")
                 .collect(Collectors.joining());
     }
 
     public void startGame() throws IOException {
+        isGameStarted=true;
         addQuoteToList();
         broadcast(START_GAME);
+        quoteToGuess=generateRandomQuote();
         broadcast(prepareQuoteToGame());
-
     }
+
+    public void removeFromServerList(){
+        server.removeGameFromList(this);
+    }
+
+
 
 
     public class PlayerHandler implements Runnable {
 
-        private String name;
+        private String name=null;
         private Socket playerSocket;
         private PrintWriter out;
         private String message;
-
+        BufferedReader in;
 
         public PlayerHandler(Socket playerSocket) {
             this.playerSocket = playerSocket;
@@ -111,19 +158,24 @@ public class Game {
         public void run() {
 
             try {
-                BufferedReader in = new BufferedReader(new InputStreamReader(playerSocket.getInputStream()));
+                in = new BufferedReader(new InputStreamReader(playerSocket.getInputStream()));
                 addPlayerToList(this);
                 send(ASK_NAME);
-                send(PERMITION_TO_TALK);
                 name = in.readLine();
-                System.out.println(name);
+                while (!isGameEnded);
 
-                while (!playerSocket.isClosed()) {
-                    message = in.readLine();
-                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        }
+
+        public String getAnswer()  {
+            try{
+                return in.readLine();
+            }catch (IOException e) {
+                e.printStackTrace();
+            }
+               return "";
         }
 
         public void send(String message) {
