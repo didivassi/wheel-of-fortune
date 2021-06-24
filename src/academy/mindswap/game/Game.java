@@ -93,7 +93,7 @@ public class Game implements Runnable {
 
             playerHandler.send(playerHandler.getName() + " Choose a letter ");
             playerHandler.send(PERMISSION_TO_TALK);
-            String playerAnswer=playerHandler.getAnswer();
+            String playerAnswer = playerHandler.getAnswer();
             System.out.println(playerAnswer);
             //SPIN WHEEL
             //GET LETTER
@@ -120,6 +120,10 @@ public class Game implements Runnable {
         return Arrays.stream(quoteToGuess.split(""))
                 .map(c -> c = c.equals(" ") ? c : "#")
                 .collect(Collectors.joining());
+    }
+
+    public void checkChar(String playerAnswer){
+
     }
 
     public void startGame() throws IOException {
