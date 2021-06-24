@@ -13,8 +13,6 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import static academy.mindswap.messages.Messages.*;
-
 //retornar frase
 // metodo frase
 //split e replace por char
@@ -40,6 +38,10 @@ public class Game {
         //if(service.) // pesquisar documentação da thread para numero de
     }
 
+    public void spinWheel() {
+
+    }
+
     public synchronized void  addPlayerToList(PlayerHandler playerHandler) {
         System.out.println("entered add players");
         listOfPlayers.add(playerHandler);
@@ -47,8 +49,13 @@ public class Game {
         //broadcast(playerHandler.getName(), )
 
     }
+
+    /**
+     * Check if the game have all players to start de game;
+     * @return true if the game don't have the max of players and false if the game have the players to start
+     */
     public boolean isAvailable() {
-        return listOfPlayers.size() < MAX_NUM_OF_PLAYERS;
+        return listOfPlayers.size() <= MAX_NUM_OF_PLAYERS;
     }
     /*public void spinWheel(ConsoleHelper animate) {
         animate ADICIONAR A CLASS ANIMATE
