@@ -1,5 +1,6 @@
 package academy.mindswap.game;
 
+import static academy.mindswap.messages.Messages.*;
 
 
 import java.io.BufferedReader;
@@ -14,6 +15,10 @@ import java.util.concurrent.Executors;
 
 import static academy.mindswap.messages.Messages.*;
 
+//retornar frase
+// metodo frase
+//split e replace por char
+// start game
 public class Game {
 
     private static final int MAX_NUM_OF_PLAYERS = 3;
@@ -29,6 +34,11 @@ public class Game {
         service = Executors.newFixedThreadPool(MAX_NUM_OF_PLAYERS);
         service.submit(new PlayerHandler(playerSocket, DEFAULT_NAME + ++numberOfConnections));
     }
+
+    public void startGame(){
+        //if(service.) // pesquisar documentação da thread para numero de
+    }
+
     public synchronized void  addPlayerToList(PlayerHandler playerHandler) {
         System.out.println("entered add players");
         listOfPlayers.add(playerHandler);
