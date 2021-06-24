@@ -1,12 +1,12 @@
 package academy.mindswap.game;
 
+import academy.mindswap.messages.Messages;
+
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
-import static academy.mindswap.messages.Messages.DEFAULT_NAME;
 
 public class Game {
 
@@ -18,11 +18,11 @@ public class Game {
     public void acceptPlayer(Socket playerSocket) {
         int numberOfConnectios = 0;
         service = Executors.newFixedThreadPool(3);
-        service.submit(new PlayerHandler(playerSocket, DEFAULT_NAME + ++numberOfConnectios));
+        service.submit(new PlayerHandler(playerSocket, Messages.DEFAULT_NAME + ++numberOfConnectios));
     }
     public void addPlayerToList(PlayerHandler playerHandler) {
         listOfPlayers.add(playerHandler);
-        playerHandler.send("Welcome to game!");
+        playerHandler.send(Messages.PLAYER_ENTERED_GAME);
         //broadcast(playerHandler.getName(), )
 
     }
