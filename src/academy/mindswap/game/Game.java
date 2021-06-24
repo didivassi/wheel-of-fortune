@@ -47,9 +47,7 @@ public class Game implements Runnable {
         while (!isGameEnded){
             try {
                 if(checkIfGameCanStart() && !isGameStarted){
-                    System.out.println("game started");
                     startGame();
-
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -57,11 +55,8 @@ public class Game implements Runnable {
             if(isGameStarted){
                 doTurn();
             }
-
-
         }
         removeFromServerList();
-
     }
 
     public synchronized void acceptPlayer(Socket playerSocket) {
@@ -78,8 +73,6 @@ public class Game implements Runnable {
         listOfPlayers.forEach(player -> player.send(message));
     }
 
-
-
     public synchronized boolean isAcceptingPlayers() {
         return listOfPlayers.size() < MAX_NUM_OF_PLAYERS;
     }
@@ -91,8 +84,7 @@ public class Game implements Runnable {
     private void doTurn(){
         for (PlayerHandler playerHandler:listOfPlayers) {
 
-            playerHandler.send(playerHandler.getName() + " Choose a letter ");
-            playerHandler.send(PERMISSION_TO_TALK);
+            playerHandler.send(playerHandler.getName() + CHOOSE_A_LETTER);
             String playerAnswer=playerHandler.getAnswer();
             System.out.println(playerAnswer);
             //SPIN WHEEL

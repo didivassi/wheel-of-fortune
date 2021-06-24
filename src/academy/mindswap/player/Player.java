@@ -28,7 +28,6 @@ public class Player {
         }
     }
 
-
     public void startPlay() throws IOException {
 
         playerSocket = new Socket(InetAddress.getLocalHost(), 8080);
@@ -84,10 +83,7 @@ public class Player {
 
     }
 
-
-
-        private class SendMessages implements Runnable {
-
+    private class SendMessages implements Runnable {
             @Override
             public void run() {
                 try {
