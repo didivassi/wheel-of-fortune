@@ -38,6 +38,7 @@ public class MoneyHandler implements CommandHandler {
                 guessQuoteFlow(game, playerHandler);
                 break;
         }
+
         game.broadcast(CHOSEN_LETTERS + game.getListOfChosenLetters());
         game.broadcast(game.prepareQuoteToGame());
 
@@ -88,7 +89,12 @@ public class MoneyHandler implements CommandHandler {
 
     private void guessQuoteFlow(Game game, Game.PlayerHandler playerHandler) {
         playerHandler.send(GUESS_QUOTE);
-        if (playerHandler.getAnswer().equals(game.getQuoteToGuess())) {
+        if (playerHandler.getAnswer()
+                .toLowerCase()
+                .replace("[^a-z]","")
+                .equals(game
+                        .getQuoteToGuess()
+                        .replace("[^a-z]",""))) {
             Arrays.stream(game.getQuoteToGuess().split("")).forEach(game::addPlayerLetters);
         }
         game.broadcast(FAIL_ANSWER);
