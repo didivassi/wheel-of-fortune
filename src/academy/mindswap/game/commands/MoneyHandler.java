@@ -9,6 +9,8 @@ import static academy.mindswap.messages.Messages.*;
 public class MoneyHandler implements CommandHandler {
 
     private int bonus;
+    private Game game;
+    private Game.PlayerHandler playerHandler;
 
     public MoneyHandler(int bonus) {
         this.bonus = bonus;
@@ -16,29 +18,29 @@ public class MoneyHandler implements CommandHandler {
 
     @Override
     public void execute(Game game, Game.PlayerHandler playerHandler) {
-        playerHandler.send(MONEY_OPTIONS);
-
+        this.game=game;
+        this.playerHandler=playerHandler;
         String optionsRegex = "[abc]";
+        String message=MONEY_OPTIONS;
 
-        String option = playerHandler.getAnswer().toLowerCase();
-
-        while (!checkAnswer(option, optionsRegex)) {
-            playerHandler.send(playerHandler.getName() + INVALID_OPTION);
-            option = playerHandler.getAnswer().toLowerCase();
+        String option;
+        if(playerHandler.getPlayerCash()<3000){
+            optionsRegex = "[ab]";
+            message= MONEY_OPTIONS;
         }
 
+        option = getPlayerAnswer(message, optionsRegex, playerHandler.getName() + INVALID_OPTION);
         switch (option) {
             case "a":
                 consonantFlow(game, playerHandler);
                 break;
             case "b":
-                vowelFlow(game, playerHandler);
-                break;
-            default:
                 guessQuoteFlow(game, playerHandler);
                 break;
+            default:
+                vowelFlow(game, playerHandler);
+                break;
         }
-
         game.broadcast(CHOSEN_LETTERS+ "["+game.getListOfChosenLetters()+"]\n");
         game.broadcast(game.prepareQuoteToGame());
 
@@ -51,47 +53,59 @@ public class MoneyHandler implements CommandHandler {
         return playerAnswer.toLowerCase().matches(regex);
     }
 
-    private void consonantFlow(Game game, Game.PlayerHandler playerHandler) {
-        String consonantRegex = "[a-z&&[^aeiou]]";
-        playerHandler.send(CHOOSE_A_CONSONANT);
-        String consonant = playerHandler.getAnswer().toLowerCase();
-
-        while (!checkAnswer(consonant, consonantRegex)) {
-            playerHandler.send(playerHandler.getName() + INVALID_CONSONANT);
-            consonant = playerHandler.getAnswer().toLowerCase();
+    private String getMessageFromBuffer(){
+        try {
+            return playerHandler.getAnswer().toLowerCase();
+        }catch (NullPointerException e){
+            return "";
         }
-        game.addPlayerLetters(consonant);
-        if(game.getQuoteToGuess().toLowerCase().contains(consonant)) {
+    }
+
+    private String getPlayerAnswer(String messageToSend, String regex, String invalidMessage){
+        playerHandler.send(messageToSend);
+        String answer;
+        answer=getMessageFromBuffer();
+        while (!checkAnswer(answer, regex)  && !playerHandler.hasLef()) {
+            playerHandler.send(playerHandler.getName() + invalidMessage);
+            answer = getMessageFromBuffer();
+        }
+        return answer;
+    }
+
+    private void quoteContainsLetter(String letter){
+        if(game.getQuoteToGuess().toLowerCase().contains(letter)) {
             playerHandler.addCash(bonus);
-            game.broadcast(String.format(WON_BONUS,playerHandler.getName(),bonus, consonant));
+            game.broadcast(String.format(WON_BONUS,playerHandler.getName(),bonus, letter));
             guessQuoteFlow(game, playerHandler);
             return;
         }
-        game.broadcast(FAIL_ANSWER);
+        game.broadcast(String.format(FAIL_ANSWER,playerHandler.getName(),letter));
+    }
+
+    private void consonantFlow(Game game, Game.PlayerHandler playerHandler) {
+        String consonantRegex = "[a-z&&[^aeiou]]";
+        String consonant;
+
+        consonant=getPlayerAnswer(CHOOSE_A_CONSONANT, consonantRegex, INVALID_CONSONANT);
+        game.addPlayerLetters(consonant);
+        quoteContainsLetter(consonant);
     }
 
     private void vowelFlow(Game game, Game.PlayerHandler playerHandler) {
         String vowelRegex = "[aeiou]";
-        playerHandler.send(CHOOSE_A_VOWEL);
-        String vowel = playerHandler.getAnswer().toLowerCase();
+        String vowel;
+        vowel=getPlayerAnswer(CHOOSE_A_VOWEL, vowelRegex, INVALID_VOWEL);
+
         playerHandler.removeCash(3000);
-        while (!checkAnswer(vowel, vowelRegex)) {
-            playerHandler.send(playerHandler.getName() + INVALID_VOWEL);
-            vowel = playerHandler.getAnswer().toLowerCase();
-        }
         game.addPlayerLetters(vowel);
-        if(game.getQuoteToGuess().toLowerCase().contains(vowel)) {
-            playerHandler.addCash(bonus);
-            game.broadcast(String.format(WON_BONUS,playerHandler.getName(),bonus, vowel));
-            guessQuoteFlow(game, playerHandler);
-            return;
-        }
-        game.broadcast(FAIL_ANSWER);
+        quoteContainsLetter(vowel);
     }
 
     private void guessQuoteFlow(Game game, Game.PlayerHandler playerHandler) {
         playerHandler.send(GUESS_QUOTE);
-        if (playerHandler.getAnswer()
+        String answer;
+        answer=getMessageFromBuffer();
+        if (answer
                 .toLowerCase()
                 .replaceAll("[^a-z]","")
                 .equals(game
@@ -99,9 +113,11 @@ public class MoneyHandler implements CommandHandler {
                         .toLowerCase()
                         .replaceAll("[^a-z]",""))) {
             Arrays.stream(game.getQuoteToGuess().split("")).forEach(game::addPlayerLetters);
+            game.broadcast(String.format(PLAYER_WON,playerHandler.getName(),answer));
+            game.endGame();
             return;
         }
-        game.broadcast(FAIL_ANSWER);
+        game.broadcast(String.format(FAIL_ANSWER,playerHandler.getName(),answer) );
     }
 
 }

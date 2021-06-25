@@ -13,10 +13,7 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
@@ -33,10 +30,10 @@ public class Game implements Runnable {
     ExecutorService service;
     private final Server server;
     private final List<String> gameQuotes;
-    private boolean isGameEnded;
-    private boolean isGameStarted;
+    private volatile boolean isGameEnded;
+    private volatile boolean isGameStarted;
     private String quoteToGuess;
-    List<String> playerLetters;
+    Set<String> playerLetters;
     private Wheel wheel;
 
     public Game(Server server) {
@@ -46,7 +43,7 @@ public class Game implements Runnable {
         gameQuotes = new ArrayList<>();
         isGameEnded = false;
         isGameStarted = false;
-        playerLetters = new LinkedList<>();
+        playerLetters = new HashSet<>();
 
     }
 
@@ -57,16 +54,16 @@ public class Game implements Runnable {
                 if (checkIfGameCanStart() && !isGameStarted) {
                     startGame();
                     wheel = new Wheel();
-                    wheel.createWheel(30,0.25);
+                    wheel.createWheel(30, 0.25);
                 }
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            if (isGameStarted) {
+            if (isGameStarted && !isGameEnded) {
                 doTurn();
             }
         }
-        removeFromServerList();
+
     }
 
     public synchronized void acceptPlayer(Socket playerSocket) {
@@ -78,23 +75,37 @@ public class Game implements Runnable {
         playerHandler.send(WELCOME_MESSAGE);
     }
 
-    public void broadcast(String message) {
-        listOfPlayers.forEach(player -> player.send(message));
+    public synchronized void removePlayerFromList(PlayerHandler playerHandler) {
+        listOfPlayers.remove(playerHandler);
+    }
+
+    public synchronized void broadcast(String message) {
+        listOfPlayers.stream()
+                .filter(p ->!p.hasLef)
+                .forEach(player -> player.send(message));
     }
 
     public synchronized boolean isAcceptingPlayers() {
-        return listOfPlayers.size() < MAX_NUM_OF_PLAYERS;
+        return listOfPlayers.size() < MAX_NUM_OF_PLAYERS && !isGameStarted;
     }
 
     private boolean checkIfGameCanStart() {
         return !isAcceptingPlayers() && listOfPlayers.stream().noneMatch(playerHandler -> playerHandler.getName() == null);
     }
 
-    private void doTurn() {
+    private synchronized void doTurn() {
+
+
         for (PlayerHandler playerHandler : listOfPlayers) {
+            broadcast(String.format(PLAYER_TURN, playerHandler.getName()));
             Command command = wheel.spinWheel();
-            wheel.animate(command,3,this);
-            command.getHandler().execute(this, playerHandler);
+            wheel.animate(command, 1, this);
+            if(!playerHandler.hasLef()){
+                command.getHandler().execute(this, playerHandler);
+            }
+            if (isGameEnded) {
+                return;
+            }
         }
     }
 
@@ -120,7 +131,7 @@ public class Game implements Runnable {
                 .collect(Collectors.joining());
     }
 
-    public void startGame() throws IOException {
+    public synchronized void startGame() throws IOException {
         isGameStarted = true;
         addQuoteToList();
         broadcast(START_GAME);
@@ -131,6 +142,7 @@ public class Game implements Runnable {
     public void addPlayerLetters(String letter) {
         this.playerLetters.add(letter);
     }
+
     public String getListOfChosenLetters() {
         return String.join(", ", playerLetters);
     }
@@ -143,10 +155,19 @@ public class Game implements Runnable {
         return quoteToGuess;
     }
 
-    public List<String> getPlayerLetters() {
-        return playerLetters;
-    }
 
+    public void endGame() {
+        removeFromServerList();
+        broadcast(GAME_END);
+        listOfPlayers.forEach(playerHandler -> {
+            try {
+                playerHandler.playerSocket.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+        isGameEnded = true;
+    }
 
     public class PlayerHandler implements Runnable {
 
@@ -155,6 +176,7 @@ public class Game implements Runnable {
         private PrintWriter out;
         private int playerCash;
         private String message;
+        private boolean hasLef;
         BufferedReader in;
 
         public PlayerHandler(Socket playerSocket) {
@@ -163,7 +185,7 @@ public class Game implements Runnable {
             try {
                 out = new PrintWriter(playerSocket.getOutputStream(), true);
             } catch (IOException e) {
-                System.out.println(e.getMessage());
+                quit();
             }
         }
 
@@ -178,17 +200,32 @@ public class Game implements Runnable {
                 while (!isGameEnded) ;
 
             } catch (IOException e) {
-                e.printStackTrace();
+                quit();
             }
         }
 
         public String getAnswer() {
             try {
                 return in.readLine();
-            } catch (IOException e) {
-                e.printStackTrace();
+            } catch (IOException | NullPointerException e) {
+                quit();
+                //e.printStackTrace();
             }
             return "";
+        }
+
+        private void quit() {
+           // removePlayerFromList(this);
+            hasLef=true;
+            try {
+                playerSocket.close();
+
+            } catch (IOException e) {
+
+            }finally {
+                broadcast(String.format(PLAYER_LEFT_GAME, name));
+            }
+
         }
 
         public void send(String message) {
@@ -211,14 +248,11 @@ public class Game implements Runnable {
         public int getPlayerCash() {
             return playerCash;
         }
+
+        public boolean hasLef() {
+            return hasLef;
+        }
     }
 
-
-    /*START()
-    SPINWHEEL()
-    askForPhrase()
-    games starts
-    game aks server a phrase (game replace the words for #)
-    game broadcasts the phrase to all players*/
 
 }
