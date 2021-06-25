@@ -16,6 +16,6 @@ public class BankruptHandler implements CommandHandler{
     @Override
     public void execute(Game game, Game.PlayerHandler playerHandler) {
         playerHandler.removeCash(playerHandler.getPlayerCash());
-        playerHandler.send(BANKRUPT);
+        game.broadcast(String.format(BANKRUPT,playerHandler.getName()));
     }
 }
