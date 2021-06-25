@@ -34,7 +34,7 @@ public class Game implements Runnable {
     private boolean isGameEnded;
     private boolean isGameStarted;
     private String quoteToGuess;
-    List<String> playerLetters = new LinkedList<>();
+    List<String> playerLetters;
 
     public Game(Server server) {
         this.server = server;
@@ -89,13 +89,8 @@ public class Game implements Runnable {
 
             //spinWheel();
 
-            playerHandler.send(playerHandler.getName() + CHOOSE_A_LETTER);
-
             String playerAnswer = playerHandler.getAnswer();
-            while (!checkAnswer(playerAnswer)) {
-                playerHandler.send(playerHandler.getName() + INVALID_LETTER);
-                playerAnswer = playerHandler.getAnswer();
-            }
+
             //findChar(playerAnswer);
             System.out.println(playerAnswer);
             //SPIN WHEEL
@@ -121,19 +116,13 @@ public class Game implements Runnable {
 
     public String prepareQuoteToGame() {
 
-        String regex= String.join("", playerLetters);
+        String regex = String.join("", playerLetters);
         return Arrays.stream(quoteToGuess.split(""))
-                .map(c -> c =c.toLowerCase().matches("["+regex+"||[^a-z]]") ? c : "#")
+                .map(c -> c = c.toLowerCase().matches("[" + regex + "||[^a-z]]") ? c : "#")
                 .collect(Collectors.joining());
     }
 
-    public boolean checkAnswer(String playerAnswer) {
-        if (playerAnswer.length() != 1) {
-            return false;
-        }
-        playerAnswer.toLowerCase().matches("[a-z&&[^aeiou]]");
-        return true;
-    }
+
 
 
     public void startGame() throws IOException {
@@ -148,7 +137,9 @@ public class Game implements Runnable {
         server.removeGameFromList(this);
     }
 
-
+    public String getQuoteToGuess() {
+        return quoteToGuess;
+    }
 
     public class PlayerHandler implements Runnable {
 
@@ -209,6 +200,7 @@ public class Game implements Runnable {
         public String getName() {
             return name;
         }
+
         public int getPlayerCash() {
             return playerCash;
         }

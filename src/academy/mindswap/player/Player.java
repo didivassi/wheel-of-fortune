@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.Socket;
+
 public class Player {
     private Socket playerSocket;
     public boolean isPlayerTurn;
