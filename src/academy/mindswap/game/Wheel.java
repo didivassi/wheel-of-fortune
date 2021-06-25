@@ -12,7 +12,7 @@ public class Wheel {
 
     private List<Command> wheel = new LinkedList<>();
 
-    private void createWheel(int numberOfOptions, double percentageOfPenalties) {
+    public void createWheel(int numberOfOptions, double percentageOfPenalties) {
         int max_penalties = (int) Math.ceil(numberOfOptions * percentageOfPenalties);
         int max_penaltyFrequency = (int) Math.floor(numberOfOptions * percentageOfPenalties / getNumberOfPenalties());
         List<Command> penaltiesInWheel = new LinkedList<>();
@@ -79,16 +79,16 @@ public class Wheel {
         return wheel;
     }
 
-    public Command getLuckyOption(){
+    public Command spinWheel(){
         return wheel.get(getRandomNumber(wheel.size() - 1));
     }
 
-    public void animate(Command luckyOption, int turns){
+    public void animate(Command luckyOption, int turns, Game game){
         String anim=wheel.stream().map(Command::toString).collect(Collectors.joining(" | "));
         int sleep=10;
         for (int i = 0; i <= turns; i++) {
             for (int j = 0; j < anim.length()-9 ; j++) {
-                System.out.print("\r"+anim.substring(j,j+9));
+                game.broadcast("\r"+anim.substring(j,j+9));
                 try {
                     Thread.sleep(sleep);
                 }catch (InterruptedException e){
@@ -97,16 +97,9 @@ public class Wheel {
             }
             sleep+=20;
         }
-        System.out.print("\r"+"| "+luckyOption.toString()+" |");
+        game.broadcast("\r"+"| "+luckyOption.toString()+" |\n");
     }
 
-    public static void main(String[] args) {
-        Wheel wheel = new Wheel();
-        wheel.createWheel(30,0.25);
-        Command luckyOption=  wheel.getLuckyOption();
-        System.out.println(wheel.getWheel());
-        System.out.println(luckyOption);
-        wheel.animate(luckyOption,3);
-    }
+
 
 }

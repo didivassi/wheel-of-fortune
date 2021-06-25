@@ -61,9 +61,6 @@ public class Player {
                 buildingCommand=checkCommandEnd(letter);
                 if (!buildingCommand) {
                     isPlayerTurn=canTalk(command.toString());
-                    if(isPlayerTurn){
-                        System.out.println("i can speak");
-                    }
                     command.delete(0,command.length());
                 }
             } else {

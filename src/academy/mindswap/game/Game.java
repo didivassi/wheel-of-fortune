@@ -3,6 +3,7 @@ package academy.mindswap.game;
 
 import static academy.mindswap.messages.Messages.*;
 
+import academy.mindswap.game.commands.Command;
 import academy.mindswap.server.Server;
 
 import java.io.BufferedReader;
@@ -35,6 +36,7 @@ public class Game implements Runnable {
     private boolean isGameStarted;
     private String quoteToGuess;
     List<String> playerLetters;
+    private Wheel wheel;
 
     public Game(Server server) {
         this.server = server;
@@ -51,6 +53,8 @@ public class Game implements Runnable {
             try {
                 if (checkIfGameCanStart() && !isGameStarted) {
                     startGame();
+                    wheel = new Wheel();
+                    wheel.createWheel(30,0.25);
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -86,17 +90,9 @@ public class Game implements Runnable {
 
     private void doTurn() {
         for (PlayerHandler playerHandler : listOfPlayers) {
-
-            //spinWheel();
-
-            String playerAnswer = playerHandler.getAnswer();
-
-            //findChar(playerAnswer);
-            System.out.println(playerAnswer);
-            //SPIN WHEEL
-            //GET LETTER
-            //SHOW RESULTS
-
+            Command command = wheel.spinWheel();
+            wheel.animate(command,3,this);
+            command.getHandler().execute(this, playerHandler);
         }
     }
 

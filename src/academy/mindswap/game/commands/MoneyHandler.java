@@ -39,7 +39,7 @@ public class MoneyHandler implements CommandHandler {
                 break;
         }
 
-        game.broadcast(CHOSEN_LETTERS + game.getListOfChosenLetters());
+        game.broadcast(CHOSEN_LETTERS+ "["+game.getListOfChosenLetters()+"]\n");
         game.broadcast(game.prepareQuoteToGame());
 
     }
@@ -61,10 +61,11 @@ public class MoneyHandler implements CommandHandler {
             consonant = playerHandler.getAnswer().toLowerCase();
         }
         game.addPlayerLetters(consonant);
-        if(game.getQuoteToGuess().contains(consonant)) {
+        if(game.getQuoteToGuess().toLowerCase().contains(consonant)) {
             playerHandler.addCash(bonus);
             game.broadcast(String.format(WON_BONUS,playerHandler.getName(),bonus, consonant));
             guessQuoteFlow(game, playerHandler);
+            return;
         }
         game.broadcast(FAIL_ANSWER);
     }
@@ -79,10 +80,11 @@ public class MoneyHandler implements CommandHandler {
             vowel = playerHandler.getAnswer().toLowerCase();
         }
         game.addPlayerLetters(vowel);
-        if(game.getQuoteToGuess().contains(vowel)) {
+        if(game.getQuoteToGuess().toLowerCase().contains(vowel)) {
             playerHandler.addCash(bonus);
             game.broadcast(String.format(WON_BONUS,playerHandler.getName(),bonus, vowel));
             guessQuoteFlow(game, playerHandler);
+            return;
         }
         game.broadcast(FAIL_ANSWER);
     }
@@ -91,11 +93,13 @@ public class MoneyHandler implements CommandHandler {
         playerHandler.send(GUESS_QUOTE);
         if (playerHandler.getAnswer()
                 .toLowerCase()
-                .replace("[^a-z]","")
+                .replaceAll("[^a-z]","")
                 .equals(game
                         .getQuoteToGuess()
-                        .replace("[^a-z]",""))) {
+                        .toLowerCase()
+                        .replaceAll("[^a-z]",""))) {
             Arrays.stream(game.getQuoteToGuess().split("")).forEach(game::addPlayerLetters);
+            return;
         }
         game.broadcast(FAIL_ANSWER);
     }
