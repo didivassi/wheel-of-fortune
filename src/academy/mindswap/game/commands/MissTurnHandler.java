@@ -15,6 +15,6 @@ public class MissTurnHandler implements CommandHandler{
      */
     @Override
     public void execute(Game game, Game.PlayerHandler playerHandler) {
-        playerHandler.send(MISS_TURN);
+        game.broadcast(String.format(MISS_TURN,playerHandler.getName()));
     }
 }

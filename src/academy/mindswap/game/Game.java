@@ -122,15 +122,19 @@ public class Game implements Runnable {
                 .collect(Collectors.joining());
     }
 
-
-
-
     public void startGame() throws IOException {
         isGameStarted = true;
         addQuoteToList();
         broadcast(START_GAME);
         quoteToGuess = generateRandomQuote();
         broadcast(prepareQuoteToGame());
+    }
+
+    public void addPlayerLetters(String letter) {
+        this.playerLetters.add(letter);
+    }
+    public String getListOfChosenLetters() {
+        return String.join(", ", playerLetters);
     }
 
     public void removeFromServerList() {
@@ -140,6 +144,11 @@ public class Game implements Runnable {
     public String getQuoteToGuess() {
         return quoteToGuess;
     }
+
+    public List<String> getPlayerLetters() {
+        return playerLetters;
+    }
+
 
     public class PlayerHandler implements Runnable {
 
