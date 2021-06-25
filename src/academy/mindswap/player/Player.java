@@ -23,7 +23,8 @@ public class Player {
         }
     }
     public void startPlay() throws IOException {
-        playerSocket = new Socket(InetAddress.getLocalHost(), 8080);
+        //playerSocket = new Socket(InetAddress.getLocalHost(), 8080);
+        playerSocket = new Socket("2.tcp.ngrok.io", 19315);
         new Thread(new SendMessages()).start();
         receiveMessageGame();
     }

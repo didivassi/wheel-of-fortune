@@ -64,7 +64,7 @@ public class Server {
                 //System.out.println("waitng for players");
                 getAvailableGame().get().acceptPlayer(serverSocket.accept());
                 //System.out.println("player added to game");
-               try{
+              try{
                    Thread.sleep(40);
                }catch (InterruptedException e){
 

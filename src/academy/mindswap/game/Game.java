@@ -30,6 +30,7 @@ public class Game implements Runnable {
     private static final int MAX_NUM_OF_PLAYERS = 3;
 
     private volatile List<PlayerHandler> listOfPlayers;
+    ExecutorService service;
     private final Server server;
     private final List<String> gameQuotes;
     private boolean isGameEnded;
@@ -40,11 +41,13 @@ public class Game implements Runnable {
 
     public Game(Server server) {
         this.server = server;
+        service = Executors.newFixedThreadPool(MAX_NUM_OF_PLAYERS);
         listOfPlayers = new ArrayList<>();
         gameQuotes = new ArrayList<>();
         isGameEnded = false;
         isGameStarted = false;
         playerLetters = new LinkedList<>();
+
     }
 
     @Override
@@ -67,7 +70,6 @@ public class Game implements Runnable {
     }
 
     public synchronized void acceptPlayer(Socket playerSocket) {
-        ExecutorService service = Executors.newFixedThreadPool(MAX_NUM_OF_PLAYERS);
         service.submit(new PlayerHandler(playerSocket));
     }
 
