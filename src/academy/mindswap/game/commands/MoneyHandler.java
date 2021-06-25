@@ -2,9 +2,6 @@ package academy.mindswap.game.commands;
 
 import academy.mindswap.game.Game;
 
-import java.util.Locale;
-import java.util.logging.Handler;
-
 import static academy.mindswap.messages.Messages.*;
 
 public class MoneyHandler implements CommandHandler {

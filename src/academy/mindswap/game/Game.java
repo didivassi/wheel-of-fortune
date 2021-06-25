@@ -89,8 +89,6 @@ public class Game implements Runnable {
 
             //spinWheel();
 
-            playerHandler.send(playerHandler.getName() + CHOOSE_A_LETTER);
-
             String playerAnswer = playerHandler.getAnswer();
 
             //findChar(playerAnswer);
