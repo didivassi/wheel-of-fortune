@@ -10,10 +10,10 @@ public enum WheelOptions {
     ONE_HUNDRED("100",false),
     FIFTY("50",false);
 
-    String description;
-    boolean isPenalty;
+    private String description;
+    private boolean isPenalty;
 
-    private WheelOptions(String description,boolean isPenalty){
+    WheelOptions(String description,boolean isPenalty){
         this.description=description;
         this.isPenalty=isPenalty;
 
