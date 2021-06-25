@@ -1,5 +1,7 @@
 package academy.mindswap.game;
 
+import academy.mindswap.game.commands.Command;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -8,14 +10,14 @@ import java.util.stream.Collectors;
 
 public class Wheel {
 
-    private List<WheelOptions> wheel = new LinkedList<>();
+    private List<Command> wheel = new LinkedList<>();
 
     private void createWheel(int numberOfOptions, double percentageOfPenalties) {
         int max_penalties = (int) Math.ceil(numberOfOptions * percentageOfPenalties);
         int max_penaltyFrequency = (int) Math.floor(numberOfOptions * percentageOfPenalties / getNumberOfPenalties());
-        List<WheelOptions> penaltiesInWheel = new LinkedList<>();
-        WheelOptions lastOption = null;
-        WheelOptions option;
+        List<Command> penaltiesInWheel = new LinkedList<>();
+        Command lastOption = null;
+        Command option;
         int i = 0;
 
         while (wheel.size() <= numberOfOptions) {
@@ -41,8 +43,8 @@ public class Wheel {
     }
 
 
-    private WheelOptions getPenalty() {
-        WheelOptions option = getRandomWheelOption();
+    private Command getPenalty() {
+        Command option = getRandomWheelOption();
         if (!option.isPenalty()) {
             return getPenalty();
         }
@@ -50,39 +52,39 @@ public class Wheel {
     }
 
     private int getNumberOfPenalties() {
-        return (int) Arrays.stream(WheelOptions.values())
-                .filter(WheelOptions::isPenalty)
+        return (int) Arrays.stream(Command.values())
+                .filter(Command::isPenalty)
                 .count();
 
     }
 
-    private WheelOptions getNotPenalty() {
-        WheelOptions option = getRandomWheelOption();
+    private Command getNotPenalty() {
+        Command option = getRandomWheelOption();
         if (option.isPenalty()) {
             return getNotPenalty();
         }
         return option;
     }
 
-    private WheelOptions getRandomWheelOption() {
-        int position = getRandomNumber(WheelOptions.values().length);
-        return WheelOptions.values()[position];
+    private Command getRandomWheelOption() {
+        int position = getRandomNumber(Command.values().length);
+        return Command.values()[position];
     }
 
     private int getRandomNumber(int max) {
         return (int) (Math.random() * (max));
     }
 
-    public List<WheelOptions> getWheel() {
+    public List<Command> getWheel() {
         return wheel;
     }
 
-    public WheelOptions getLuckyOption(){
+    public Command getLuckyOption(){
         return wheel.get(getRandomNumber(wheel.size() - 1));
     }
 
-    public void animate(WheelOptions luckyOption, int turns){
-        String anim=wheel.stream().map(WheelOptions::toString).collect(Collectors.joining(" | "));
+    public void animate(Command luckyOption, int turns){
+        String anim=wheel.stream().map(Command::toString).collect(Collectors.joining(" | "));
         int sleep=10;
         for (int i = 0; i <= turns; i++) {
             for (int j = 0; j < anim.length()-9 ; j++) {
@@ -101,7 +103,7 @@ public class Wheel {
     public static void main(String[] args) {
         Wheel wheel = new Wheel();
         wheel.createWheel(30,0.25);
-        WheelOptions luckyOption=  wheel.getLuckyOption();
+        Command luckyOption=  wheel.getLuckyOption();
         System.out.println(wheel.getWheel());
         System.out.println(luckyOption);
         wheel.animate(luckyOption,3);
