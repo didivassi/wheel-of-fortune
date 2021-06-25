@@ -38,9 +38,13 @@ public class Player {
     private boolean checkCommandEnd(char letter){
         return  (String.valueOf(letter).matches("."));
     }
+
+
     private boolean canTalk(String command){
         return command.equalsIgnoreCase(PERMISSION_TO_TALK);
     }
+
+
     public void receiveMessageGame() throws IOException {
         BufferedReader in = new BufferedReader(new InputStreamReader(playerSocket.getInputStream()));
         StringBuilder command = new StringBuilder();
