@@ -1,7 +1,5 @@
 package academy.mindswap.game;
 
-
-
 import static academy.mindswap.messages.Messages.*;
 
 import academy.mindswap.server.Server;
@@ -84,6 +82,8 @@ public class Game implements Runnable {
     private void doTurn(){
         for (PlayerHandler playerHandler:listOfPlayers) {
 
+            //spinWheel();
+
             playerHandler.send(playerHandler.getName() + CHOOSE_A_LETTER);
 
             String playerAnswer=playerHandler.getAnswer();
@@ -139,19 +139,18 @@ public class Game implements Runnable {
         server.removeGameFromList(this);
     }
 
-
-
-
     public class PlayerHandler implements Runnable {
 
         private String name=null;
         private Socket playerSocket;
         private PrintWriter out;
+        private int playerCash;
         private String message;
         BufferedReader in;
 
         public PlayerHandler(Socket playerSocket) {
             this.playerSocket = playerSocket;
+            playerCash = 0;
             try {
                 out = new PrintWriter(playerSocket.getOutputStream(), true);
             } catch (IOException e) {
@@ -188,8 +187,19 @@ public class Game implements Runnable {
             out.flush();
         }
 
+        public void addCash(int bonus) {
+            playerCash += bonus;
+        }
+
+        public void removeCash(int bonus) {
+            playerCash -= bonus;
+        }
+
         public String getName() {
             return name;
+        }
+        public int getPlayerCash() {
+            return playerCash;
         }
     }
 
