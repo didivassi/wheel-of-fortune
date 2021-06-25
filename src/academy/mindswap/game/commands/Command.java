@@ -4,7 +4,7 @@ import org.omg.CORBA.PRIVATE_MEMBER;
 
 public enum Command {
     BANKRUPT("Bankrupt", new BankruptHandler()),
-    FREE_PLAY("Free Play", new FreeplayHandler()),
+    FREE_PLAY("Free Play", new FreePlayHandler()),
     MISS_TURN("Miss Turn", new MissTurnHandler()),
     ONE_THOUSAND("Money", new MoneyHandler(1000)),
     FIVE_HUNDRED("500", new MoneyHandler(500)),
