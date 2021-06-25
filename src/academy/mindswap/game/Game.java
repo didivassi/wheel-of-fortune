@@ -1,8 +1,10 @@
 package academy.mindswap.game;
 
+
 import static academy.mindswap.messages.Messages.*;
 
 import academy.mindswap.server.Server;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -12,6 +14,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -31,26 +34,28 @@ public class Game implements Runnable {
     private boolean isGameEnded;
     private boolean isGameStarted;
     private String quoteToGuess;
+    List<String> playerLetters = new LinkedList<>();
 
     public Game(Server server) {
-        this.server=server;
+        this.server = server;
         listOfPlayers = new ArrayList<>();
         gameQuotes = new ArrayList<>();
-        isGameEnded=false;
-        isGameStarted=false;
+        isGameEnded = false;
+        isGameStarted = false;
+        playerLetters = new LinkedList<>();
     }
 
     @Override
     public void run() {
-        while (!isGameEnded){
+        while (!isGameEnded) {
             try {
-                if(checkIfGameCanStart() && !isGameStarted){
+                if (checkIfGameCanStart() && !isGameStarted) {
                     startGame();
                 }
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            if(isGameStarted){
+            if (isGameStarted) {
                 doTurn();
             }
         }
@@ -75,22 +80,23 @@ public class Game implements Runnable {
         return listOfPlayers.size() < MAX_NUM_OF_PLAYERS;
     }
 
-    private boolean checkIfGameCanStart(){
-      return !isAcceptingPlayers() && listOfPlayers.stream().noneMatch(playerHandler -> playerHandler.getName() == null);
+    private boolean checkIfGameCanStart() {
+        return !isAcceptingPlayers() && listOfPlayers.stream().noneMatch(playerHandler -> playerHandler.getName() == null);
     }
 
-    private void doTurn(){
-        for (PlayerHandler playerHandler:listOfPlayers) {
+    private void doTurn() {
+        for (PlayerHandler playerHandler : listOfPlayers) {
 
             //spinWheel();
 
             playerHandler.send(playerHandler.getName() + CHOOSE_A_LETTER);
 
-            String playerAnswer=playerHandler.getAnswer();
-            while(!checkAnswer(playerAnswer)){
+            String playerAnswer = playerHandler.getAnswer();
+            while (!checkAnswer(playerAnswer)) {
                 playerHandler.send(playerHandler.getName() + INVALID_LETTER);
                 playerAnswer = playerHandler.getAnswer();
             }
+            //findChar(playerAnswer);
             System.out.println(playerAnswer);
             //SPIN WHEEL
             //GET LETTER
@@ -114,34 +120,39 @@ public class Game implements Runnable {
     }
 
     public String prepareQuoteToGame() {
+
+        String regex= String.join("", playerLetters);
         return Arrays.stream(quoteToGuess.split(""))
-                .map(c -> c = c.equals(" ") ? c : "#")
+                .map(c -> c =c.toLowerCase().matches("["+regex+"||[^a-z]]") ? c : "#")
                 .collect(Collectors.joining());
     }
 
-    public boolean checkAnswer(String playerAnswer){
-        if(playerAnswer.length() != 1){
+    public boolean checkAnswer(String playerAnswer) {
+        if (playerAnswer.length() != 1) {
             return false;
         }
-        return playerAnswer.toLowerCase().matches("[a-z&&[^aeiou]]");
-
+        playerAnswer.toLowerCase().matches("[a-z&&[^aeiou]]");
+        return true;
     }
 
+
     public void startGame() throws IOException {
-        isGameStarted=true;
+        isGameStarted = true;
         addQuoteToList();
         broadcast(START_GAME);
-        quoteToGuess=generateRandomQuote();
+        quoteToGuess = generateRandomQuote();
         broadcast(prepareQuoteToGame());
     }
 
-    public void removeFromServerList(){
+    public void removeFromServerList() {
         server.removeGameFromList(this);
     }
 
+
+
     public class PlayerHandler implements Runnable {
 
-        private String name=null;
+        private String name = null;
         private Socket playerSocket;
         private PrintWriter out;
         private int playerCash;
@@ -166,20 +177,20 @@ public class Game implements Runnable {
                 addPlayerToList(this);
                 send(ASK_NAME);
                 name = in.readLine();
-                while (!isGameEnded);
+                while (!isGameEnded) ;
 
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
 
-        public String getAnswer()  {
-            try{
+        public String getAnswer() {
+            try {
                 return in.readLine();
-            }catch (IOException e) {
+            } catch (IOException e) {
                 e.printStackTrace();
             }
-               return "";
+            return "";
         }
 
         public void send(String message) {
