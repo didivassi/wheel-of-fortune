@@ -18,5 +18,7 @@ public class FreePlayHandler implements CommandHandler{
     @Override
     public void execute(Game game, Game.PlayerHandler playerHandler) {
         CommandHandler command = MoneyHandler;
+        command.execute(game, playerHandler);
+        command.execute(game,playerHandler);
     }
 }
