@@ -14,8 +14,8 @@ public class Messages {
     public static final String INVALID_CONSONANT = " Please choose a valid consonant: \n"+PERMISSION_TO_TALK;
     public static final String INVALID_OPTION = " Please choose a valid option: \n"+PERMISSION_TO_TALK;
     public static final String BANKRUPT = "It's bad the player %s loss all money \n";
-    public static final String MONEY_OPTIONS = "Choose one option!\n "+
-            "a - Choose a consonant\n " +
+    public static final String MONEY_OPTIONS = "Choose one option!\n"+
+            "a - Choose a consonant\n" +
             "b - Buy a vowel per 3000\n" +
             "c - Try to guess the quote\n" + PERMISSION_TO_TALK;
     public static final String MISS_TURN= "The player %s loss the turn, wait for the next turn :( \n";
