@@ -1,6 +1,6 @@
 package academy.mindswap.player_client;
 
-import static academy.mindswap.messages.Messages.*;
+import static academy.mindswap.game.messages.GameMessages.*;
 
 import java.io.BufferedReader;
 import java.io.IOException;

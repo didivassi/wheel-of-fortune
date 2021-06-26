@@ -1,8 +1,6 @@
-package academy.mindswap.messages;
+package academy.mindswap.game.messages;
 
-import academy.mindswap.game.Game;
-
-public class Messages {
+public class GameMessages {
     public static final String PERMISSION_TO_TALK = "/talk now\n";
     public static final String ASK_NAME = "Write your name!\n"+PERMISSION_TO_TALK;
     public static final String WELCOME_MESSAGE = "Welcome to game, be prepared to win!\n";
@@ -31,5 +29,4 @@ public class Messages {
     public static final String PLAYER_WON = "%s is the BIG WINNER\nThe quote was: %s\n";
     public static final String PLAYER_LEFT_GAME = "%s has left the game\n";
     public static final String GAME_END = "This game is now closed. Nice to see you\n";
-
 }
