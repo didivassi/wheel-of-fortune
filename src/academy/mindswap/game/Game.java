@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 
 public class Game implements Runnable {
 
-    private static final int MAX_NUM_OF_PLAYERS = 3;
+    private static final int MAX_NUM_OF_PLAYERS = 1;
     private final Server server;
     private final List<String> gameQuotes;
     private volatile List<PlayerHandler> listOfPlayers;
@@ -86,20 +86,25 @@ public class Game implements Runnable {
         addQuoteToList();
         broadcast(START_GAME);
         quoteToGuess = generateRandomQuote();
+        broadcast(THIS_IS_THE_QUOTE);
         broadcast(prepareQuoteToGame());
     }
 
     private synchronized void doTurn() {
         for (PlayerHandler playerHandler : listOfPlayers) {
             if(!playerHandler.hasLef()){
+
                 broadcast(String.format(PLAYER_TURN, playerHandler.getName()));
                 Command command = wheel.spinWheel();
+                broadcast(SPIN_WHEEL);
                 wheel.animate(command, 1, this);
                 try {
                     command.getHandler().execute(this, playerHandler);
                 }catch (NullPointerException e){
                     System.out.println("Player didn't existed");
                 }
+                broadcast(prepareQuoteToGame());
+                broadcast(getPlayersCash());
             }
             if (isGameEnded) {
                 return;
@@ -115,15 +120,15 @@ public class Game implements Runnable {
     private String generateRandomQuote() {
         int index = (int) (Math.random() * gameQuotes.size());
 
-        return gameQuotes.get(index) + "\n";
+        return gameQuotes.get(index).concat("\n");
     }
 
     public String prepareQuoteToGame() {
         String regex = String.join("", playerLetters);
 
-        return Arrays.stream(quoteToGuess.split(""))
+        return  "\n".concat(Arrays.stream(quoteToGuess.split(""))
                 .map(c -> c = c.toLowerCase().matches("[" + regex + "|[^a-z]]") ? c : "#")
-                .collect(Collectors.joining());
+                .collect(Collectors.joining())).concat("\n");
     }
 
     public void addPlayerLetters(String letter) {
@@ -136,6 +141,13 @@ public class Game implements Runnable {
 
     public String getQuoteToGuess() {
         return quoteToGuess;
+    }
+
+    public String  getPlayersCash(){
+       return listOfPlayers.stream()
+                .map(p-> String.format(PLAYER_CASH,p.getName(), p.getPlayerCash()))
+                .collect(Collectors.joining(" || ")).concat("\n\n");
+
     }
 
     public synchronized void broadcast(String message) {

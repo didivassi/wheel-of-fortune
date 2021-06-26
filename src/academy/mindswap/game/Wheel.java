@@ -87,7 +87,7 @@ public class Wheel {
     public void animate(Command luckyOption, int turns, Game game){
         String anim=wheel.stream().map(Command::toString).collect(Collectors.joining(" | "));
         int sleep=10;
-
+        game.broadcast("\n");
         for (int i = 0; i <= turns; i++) {
 
             for (int j = 0; j < anim.length()-9 ; j++) {
@@ -104,6 +104,7 @@ public class Wheel {
         }
 
         game.broadcast("\r" + "| " + luckyOption.toString() +" |\n");
+        game.broadcast("\n");
     }
 
 }

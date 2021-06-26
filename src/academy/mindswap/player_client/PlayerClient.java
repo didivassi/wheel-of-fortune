@@ -6,6 +6,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.net.InetAddress;
 import java.net.Socket;
 
 public class PlayerClient {
@@ -27,8 +28,8 @@ public class PlayerClient {
     }
 
     public void startPlay() throws IOException {
-        //playerSocket = new Socket(InetAddress.getLocalHost(), 8080);
-        playerSocket = new Socket("2.tcp.ngrok.io", 19315);
+        playerSocket = new Socket(InetAddress.getLocalHost(), 8080);
+        //playerSocket = new Socket("2.tcp.ngrok.io", 19315);
         new Thread(new SendMessages()).start();
         receiveMessageGame();
     }
