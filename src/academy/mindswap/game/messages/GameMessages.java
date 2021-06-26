@@ -1,6 +1,15 @@
+/*
+ * @(#)MoneyHandler.java        1.0 28/06/2021
+ *
+ * Copyright (c) MindSwap Academy - Manuela Dourado, Filipa Bastos & Diogo Velho
+ * All rights reserved.
+ *
+ * This software was produced to become our first group project.
+ */
+
 package academy.mindswap.game.messages;
 
-public class GameMessages {
+public final class GameMessages {
     public static final String PERMISSION_TO_TALK = "/talk now\n";
     public static final String ASK_NAME = "Write your name!\n"+PERMISSION_TO_TALK;
     public static final String WELCOME_MESSAGE = "--Welcome to WHEEL OF FORTUNE, be prepared to win!--\n";
