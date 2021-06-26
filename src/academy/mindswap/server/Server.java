@@ -17,7 +17,6 @@ public class Server {
 
 
     public Server() {
-
         gameList = new LinkedList<>();
         threadsList =  new LinkedList<>();
     }
@@ -58,6 +57,7 @@ public class Server {
         ServerSocket serverSocket = new ServerSocket(port);
         gamesService = Executors.newCachedThreadPool();
         System.out.println("Server Started at port "+ port);
+
         while (serverSocket.isBound()) {
             if (!isGameAvailable() ){
                 createGame();
@@ -68,7 +68,7 @@ public class Server {
                 getAvailableGame().get().acceptPlayer(serverSocket.accept());
                 System.out.println("Player added to game");
 
-              try{
+              try{ //Give some time to start another game or an error will occur
                    Thread.sleep(40);
                }catch (InterruptedException e) {
                   System.out.println(e.getMessage());
@@ -87,8 +87,6 @@ public class Server {
         Game game=new Game(this);
         gameList.add(game);
         gamesService.execute(game);
-        //threadsList.add(gamesService.submit(game));
-        //showThreads("Created");
     }
 
     /**
@@ -107,23 +105,15 @@ public class Server {
         return gameList.stream().filter(Game::isAcceptingPlayers).findFirst();
     }
 
+    /**
+     * Removes a game from the gameList. This method is invoked by the game itseld
+     * @param game the game object to be removed.
+     */
     public synchronized void removeGameFromList(Game game){
         if(gameList.contains(game)){
             gameList.remove(game);
             System.out.println("Game removed from server");
         }
-
-       // showThreads("Removed");
-
-    }
-
-    public void showThreads(String  when){
-        System.out.println(when);
-        threadsList.forEach(t -> {
-            System.out.println(t);
-            System.out.println(t.isDone());
-            System.out.println(t.isCancelled());
-        });
     }
 
 
