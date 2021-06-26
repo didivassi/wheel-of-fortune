@@ -18,22 +18,18 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
-//retornar frase
-// metodo frase
-//split e replace por char
-// start game
+
 public class Game implements Runnable {
 
     private static final int MAX_NUM_OF_PLAYERS = 3;
-
-    private volatile List<PlayerHandler> listOfPlayers;
-    ExecutorService service;
     private final Server server;
     private final List<String> gameQuotes;
-    private volatile boolean isGameEnded;
-    private volatile boolean isGameStarted;
+    private final List<PlayerHandler> listOfPlayers;
+    private final ExecutorService service;
+    private boolean isGameEnded;
+    private boolean isGameStarted;
     private String quoteToGuess;
-    Set<String> playerLetters;
+    private final Set<String> playerLetters;
     private Wheel wheel;
 
     public Game(Server server) {
@@ -58,15 +54,20 @@ public class Game implements Runnable {
                 }
             } catch (IOException e) {
                 e.printStackTrace();
+                removeFromServerList();
             }
             if (isGameStarted && !isGameEnded) {
                 doTurn();
             }
         }
-
+        removeFromServerList();
     }
 
-    public synchronized void acceptPlayer(Socket playerSocket) {
+    public boolean isAcceptingPlayers() {
+        return listOfPlayers.size() < MAX_NUM_OF_PLAYERS && !isGameStarted;
+    }
+
+    public void acceptPlayer(Socket playerSocket) {
         service.submit(new PlayerHandler(playerSocket));
     }
 
@@ -75,43 +76,37 @@ public class Game implements Runnable {
         playerHandler.send(WELCOME_MESSAGE);
     }
 
-    public synchronized void removePlayerFromList(PlayerHandler playerHandler) {
-        listOfPlayers.remove(playerHandler);
+    private synchronized boolean checkIfGameCanStart() {
+        return !isAcceptingPlayers()
+                && listOfPlayers.stream().filter(p -> !p.hasLef)
+                .noneMatch(playerHandler -> playerHandler.getName() == null);
     }
 
-    public synchronized void broadcast(String message) {
-        listOfPlayers.stream()
-                .filter(p ->!p.hasLef)
-                .forEach(player -> player.send(message));
-    }
-
-    public synchronized boolean isAcceptingPlayers() {
-        return listOfPlayers.size() < MAX_NUM_OF_PLAYERS && !isGameStarted;
-    }
-
-    private boolean checkIfGameCanStart() {
-        return !isAcceptingPlayers() && listOfPlayers.stream().noneMatch(playerHandler -> playerHandler.getName() == null);
+    public void startGame() throws IOException {
+        isGameStarted = true;
+        addQuoteToList();
+        broadcast(START_GAME);
+        quoteToGuess = generateRandomQuote();
+        broadcast(prepareQuoteToGame());
     }
 
     private synchronized void doTurn() {
-
-
         for (PlayerHandler playerHandler : listOfPlayers) {
-            broadcast(String.format(PLAYER_TURN, playerHandler.getName()));
-            Command command = wheel.spinWheel();
-            wheel.animate(command, 1, this);
             if(!playerHandler.hasLef()){
-                command.getHandler().execute(this, playerHandler);
+                broadcast(String.format(PLAYER_TURN, playerHandler.getName()));
+                Command command = wheel.spinWheel();
+                wheel.animate(command, 1, this);
+                try {
+                    command.getHandler().execute(this, playerHandler);
+                }catch (NullPointerException e){
+                    System.out.println("Player didn't existed");
+                }
             }
             if (isGameEnded) {
                 return;
             }
         }
     }
-
-    /*public void spinWheel(ConsoleHelper animate) {
-        animate ADICIONAR A CLASS ANIMATE
-    }*/
 
     private void addQuoteToList() throws IOException {
         Files.lines(Paths.get("resources/WheelOfFortune"))
@@ -120,23 +115,16 @@ public class Game implements Runnable {
 
     private String generateRandomQuote() {
         int index = (int) (Math.random() * gameQuotes.size());
+
         return gameQuotes.get(index) + "\n";
     }
 
     public String prepareQuoteToGame() {
-
         String regex = String.join("", playerLetters);
-        return Arrays.stream(quoteToGuess.split(""))
-                .map(c -> c = c.toLowerCase().matches("[" + regex + "||[^a-z]]") ? c : "#")
-                .collect(Collectors.joining());
-    }
 
-    public synchronized void startGame() throws IOException {
-        isGameStarted = true;
-        addQuoteToList();
-        broadcast(START_GAME);
-        quoteToGuess = generateRandomQuote();
-        broadcast(prepareQuoteToGame());
+        return Arrays.stream(quoteToGuess.split(""))
+                .map(c -> c = c.toLowerCase().matches("[" + regex + "|[^a-z]]") ? c : "#")
+                .collect(Collectors.joining());
     }
 
     public void addPlayerLetters(String letter) {
@@ -147,26 +135,32 @@ public class Game implements Runnable {
         return String.join(", ", playerLetters);
     }
 
-    public void removeFromServerList() {
-        server.removeGameFromList(this);
-    }
-
     public String getQuoteToGuess() {
         return quoteToGuess;
     }
 
+    public synchronized void broadcast(String message) {
+        listOfPlayers.stream()
+                .filter(p ->!p.hasLef)
+                .forEach(player -> player.send(message));
+    }
+
+    public void areStillPlayersPlaying(){
+       if( listOfPlayers.stream()
+                .filter(p ->p.hasLef).count() == MAX_NUM_OF_PLAYERS) {
+           endGame();
+       }
+    }
 
     public void endGame() {
         removeFromServerList();
         broadcast(GAME_END);
-        listOfPlayers.forEach(playerHandler -> {
-            try {
-                playerHandler.playerSocket.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });
+        listOfPlayers.forEach(PlayerHandler::quit);
         isGameEnded = true;
+    }
+
+    public void removeFromServerList() {
+        server.removeGameFromList(this);
     }
 
     public class PlayerHandler implements Runnable {
@@ -183,6 +177,7 @@ public class Game implements Runnable {
             this.playerSocket = playerSocket;
             playerCash = 0;
             try {
+                in = new BufferedReader(new InputStreamReader(playerSocket.getInputStream()));
                 out = new PrintWriter(playerSocket.getOutputStream(), true);
             } catch (IOException e) {
                 quit();
@@ -193,11 +188,18 @@ public class Game implements Runnable {
         public void run() {
 
             try {
-                in = new BufferedReader(new InputStreamReader(playerSocket.getInputStream()));
                 addPlayerToList(this);
                 send(ASK_NAME);
-                name = in.readLine();
-                while (!isGameEnded) ;
+                name = getAnswer();
+                if(name!=null){// if null player left the game by closing connection
+                    broadcast(String.format(PLAYER_JOINED,name));
+                }
+
+                while (!isGameEnded){
+                    if (Thread.interrupted()) {
+                        return;
+                    }
+                }
 
             } catch (IOException e) {
                 quit();
@@ -205,27 +207,17 @@ public class Game implements Runnable {
         }
 
         public String getAnswer() {
+            String message=null;
             try {
-                return in.readLine();
+                 message=in.readLine();
             } catch (IOException | NullPointerException e) {
                 quit();
-                //e.printStackTrace();
-            }
-            return "";
-        }
-
-        private void quit() {
-           // removePlayerFromList(this);
-            hasLef=true;
-            try {
-                playerSocket.close();
-
-            } catch (IOException e) {
-
             }finally {
-                broadcast(String.format(PLAYER_LEFT_GAME, name));
+                if(message==null){
+                    quit();
+                }
             }
-
+            return message;
         }
 
         public void send(String message) {
@@ -251,6 +243,18 @@ public class Game implements Runnable {
 
         public boolean hasLef() {
             return hasLef;
+        }
+
+        public void quit() {
+            hasLef=true;
+            try {
+                playerSocket.close();
+            } catch (IOException e) {
+                System.out.println("Couldn't closer player socket");
+            }finally {
+                areStillPlayersPlaying();
+                broadcast(String.format(PLAYER_LEFT_GAME, name));
+            }
         }
     }
 

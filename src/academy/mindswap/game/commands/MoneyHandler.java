@@ -8,7 +8,7 @@ import static academy.mindswap.messages.Messages.*;
 
 public class MoneyHandler implements CommandHandler {
 
-    private int bonus;
+    private final int bonus;
     private Game game;
     private Game.PlayerHandler playerHandler;
 
@@ -17,94 +17,103 @@ public class MoneyHandler implements CommandHandler {
     }
 
     @Override
-    public void execute(Game game, Game.PlayerHandler playerHandler) {
+    public void execute(Game game, Game.PlayerHandler playerHandler) throws NullPointerException{
         this.game=game;
         this.playerHandler=playerHandler;
         String optionsRegex = "[abc]";
         String message=MONEY_OPTIONS;
-
         String option;
         if(playerHandler.getPlayerCash()<3000){
             optionsRegex = "[ab]";
-            message= MONEY_OPTIONS;
+            message= NO_MONEY_BUY_VOWEL;
         }
 
         option = getPlayerAnswer(message, optionsRegex, playerHandler.getName() + INVALID_OPTION);
+
+        if (option==null){  //occurs when suddenly a player closes client
+            return;
+        }
         switch (option) {
             case "a":
-                consonantFlow(game, playerHandler);
+                consonantFlow();
                 break;
             case "b":
-                guessQuoteFlow(game, playerHandler);
+                guessQuoteFlow();
                 break;
             default:
-                vowelFlow(game, playerHandler);
+                vowelFlow();
                 break;
         }
-        game.broadcast(CHOSEN_LETTERS+ "["+game.getListOfChosenLetters()+"]\n");
+
+        game.broadcast(CHOSEN_LETTERS + "[" + game.getListOfChosenLetters() + "]\n");
         game.broadcast(game.prepareQuoteToGame());
 
     }
 
-    private boolean checkAnswer(String playerAnswer, String regex) {
-        if (playerAnswer.length() != 1) {
-            return false;
-        }
-        return playerAnswer.toLowerCase().matches(regex);
-    }
-
     private String getMessageFromBuffer(){
-        try {
-            return playerHandler.getAnswer().toLowerCase();
-        }catch (NullPointerException e){
-            return "";
-        }
+        String answer=playerHandler.getAnswer();
+        return answer!=null? answer.toLowerCase(): null;
     }
 
     private String getPlayerAnswer(String messageToSend, String regex, String invalidMessage){
         playerHandler.send(messageToSend);
         String answer;
         answer=getMessageFromBuffer();
-        while (!checkAnswer(answer, regex)  && !playerHandler.hasLef()) {
+        while (!validateAnswer(answer, regex)  && answer!=null) {
             playerHandler.send(playerHandler.getName() + invalidMessage);
             answer = getMessageFromBuffer();
         }
         return answer;
     }
 
-    private void quoteContainsLetter(String letter){
+    private boolean validateAnswer(String playerAnswer, String regex) {
+        if(playerAnswer==null){ //occurs when suddenly a player closes client
+            return false;
+        }
+        if (playerAnswer.length() != 1) {
+            return false;
+        }
+        return playerAnswer.toLowerCase().matches(regex);
+    }
+
+    private void playerGuessedLetter(String letter){
+
         if(game.getQuoteToGuess().toLowerCase().contains(letter)) {
             playerHandler.addCash(bonus);
             game.broadcast(String.format(WON_BONUS,playerHandler.getName(),bonus, letter));
-            guessQuoteFlow(game, playerHandler);
+            guessQuoteFlow();
             return;
         }
+
         game.broadcast(String.format(FAIL_ANSWER,playerHandler.getName(),letter));
     }
 
-    private void consonantFlow(Game game, Game.PlayerHandler playerHandler) {
+    private void consonantFlow() {
         String consonantRegex = "[a-z&&[^aeiou]]";
         String consonant;
 
         consonant=getPlayerAnswer(CHOOSE_A_CONSONANT, consonantRegex, INVALID_CONSONANT);
         game.addPlayerLetters(consonant);
-        quoteContainsLetter(consonant);
+        playerGuessedLetter(consonant);
     }
 
-    private void vowelFlow(Game game, Game.PlayerHandler playerHandler) {
+    private void vowelFlow() {
         String vowelRegex = "[aeiou]";
         String vowel;
         vowel=getPlayerAnswer(CHOOSE_A_VOWEL, vowelRegex, INVALID_VOWEL);
 
         playerHandler.removeCash(3000);
         game.addPlayerLetters(vowel);
-        quoteContainsLetter(vowel);
+        playerGuessedLetter(vowel);
     }
 
-    private void guessQuoteFlow(Game game, Game.PlayerHandler playerHandler) {
+    private void guessQuoteFlow() {
         playerHandler.send(GUESS_QUOTE);
         String answer;
         answer=getMessageFromBuffer();
+        if(answer==null){
+            return;
+        }
         if (answer
                 .toLowerCase()
                 .replaceAll("[^a-z]","")

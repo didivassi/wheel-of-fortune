@@ -16,7 +16,7 @@ public class FreePlayHandler implements CommandHandler{
      * @param playerHandler to access the properties and methods of player
      */
     @Override
-    public void execute(Game game, Game.PlayerHandler playerHandler) {
+    public void execute(Game game, Game.PlayerHandler playerHandler) throws NullPointerException{
         CommandHandler command = MoneyHandler;
         command.execute(game, playerHandler);
         command.execute(game,playerHandler);
