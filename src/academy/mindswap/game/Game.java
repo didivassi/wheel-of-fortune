@@ -143,6 +143,8 @@ public class Game implements Runnable {
      * Send to the players the quote actualized with the found char in each turn
      * Informs all the players the cash of each player.
      * Check if the game is ended.
+     * @throws NoWheelException when no wheel was created before invoking spinWheel() method
+     * @throws NullGameException when the provided to wheel.animate() game object is null
      */
     private synchronized void doTurn() throws NoWheelException, NullGameException {
         for (PlayerHandler playerHandler : listOfPlayers) {
