@@ -37,35 +37,15 @@ public class PlayerClient {
     /**
      * Starts the player in specified port
      * Create a new thread to send messages to game
+     *
      * @throws IOException
      */
-
     public void startPlay() throws IOException {
         playerSocket = new Socket(InetAddress.getLocalHost(), 8080);
         //playerSocket = new Socket("2.tcp.ngrok.io", 19315);
         new Thread(new SendMessages()).start();
         receiveMessageGame();
     }
-
-    private boolean checkCommandStart(char letter) {
-        return (letter == "/".charAt(0));
-    }
-
-    /**
-     * Checks if building command
-     *
-     * @param letter the character that is going to be tested
-     * @return true if is a character false if is newline \n or carriage-return \r\n
-     */
-    private boolean checkCommandEnd(char letter) {
-        return (String.valueOf(letter).matches("."));
-    }
-
-
-    private boolean canTalk(String command) {
-        return command.equalsIgnoreCase(PERMISSION_TO_TALK);
-    }
-
 
     public void receiveMessageGame() throws IOException {
         BufferedReader in = new BufferedReader(new InputStreamReader(playerSocket.getInputStream()));
@@ -92,6 +72,37 @@ public class PlayerClient {
         quit();
     }
 
+    /**
+     *
+     * @param letter
+     * @return
+     */
+    private boolean checkCommandStart(char letter) {
+        return (letter == "/".charAt(0));
+    }
+
+    /**
+     * Checks if building command
+     *
+     * @param letter the character that is going to be tested
+     * @return true if is a character false if is newline \n or carriage-return \r\n
+     */
+    private boolean checkCommandEnd(char letter) {
+        return (String.valueOf(letter).matches("."));
+    }
+
+    /**
+     *
+     * @param command
+     * @return
+     */
+    private boolean canTalk(String command) {
+        return command.equalsIgnoreCase(PERMISSION_TO_TALK);
+    }
+
+    /**
+     *
+     */
     private void quit(){
         System.out.println(SERVER_CLOSE);
         try {
@@ -104,7 +115,14 @@ public class PlayerClient {
         System.exit(0);
 
     }
+
+    /**
+     *
+     */
     private class SendMessages implements Runnable {
+        /**
+         *
+         */
         @Override
         public void run() {
             try {
