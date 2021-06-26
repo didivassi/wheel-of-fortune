@@ -4,7 +4,7 @@ import academy.mindswap.game.Game;
 
 import java.util.Arrays;
 
-import static academy.mindswap.messages.Messages.*;
+import static academy.mindswap.game.messages.GameMessages.*;
 
 public class MoneyHandler implements CommandHandler {
 

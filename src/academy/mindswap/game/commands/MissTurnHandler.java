@@ -1,8 +1,7 @@
 package academy.mindswap.game.commands;
 
 import academy.mindswap.game.Game;
-import static academy.mindswap.messages.Messages.*;
-
+import static academy.mindswap.game.messages.GameMessages.*;
 /**
  * If the spin lands miss turn the player will not play and the game move to the next player
  */

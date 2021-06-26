@@ -1,11 +1,11 @@
 package academy.mindswap.game.commands;
 
 import academy.mindswap.game.Game;
+import static academy.mindswap.game.messages.GameMessages.*;
 
 /**
  * If the spin lands Free play the player can play twice
  */
-
 public class FreePlayHandler implements CommandHandler{
 
     private CommandHandler MoneyHandler;
