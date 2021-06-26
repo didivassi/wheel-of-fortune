@@ -17,7 +17,8 @@ public class FreePlayHandler implements CommandHandler{
      */
     @Override
     public void execute(Game game, Game.PlayerHandler playerHandler) throws NullPointerException{
-        CommandHandler command = MoneyHandler;
+        CommandHandler command = new MoneyHandler(0);
+        game.broadcast(String.format(FREE_PLAY,playerHandler.getName()));
         command.execute(game, playerHandler);
         command.execute(game,playerHandler);
     }

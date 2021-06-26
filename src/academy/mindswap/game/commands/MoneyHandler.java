@@ -27,26 +27,27 @@ public class MoneyHandler implements CommandHandler {
             optionsRegex = "[ab]";
             message= NO_MONEY_BUY_VOWEL;
         }
-
+        game.broadcast(String.format (WAITING_PLAYER_OPTION,playerHandler.getName()),playerHandler);
         option = getPlayerAnswer(message, optionsRegex, playerHandler.getName() + INVALID_OPTION);
-
         if (option==null){  //occurs when suddenly a player closes client
             return;
         }
         switch (option) {
             case "a":
+                game.broadcast(String.format (PLAYER_CHOOSE_A_CONSONANT,playerHandler.getName()),playerHandler);
                 consonantFlow();
                 break;
             case "b":
+                game.broadcast(String.format(PLAYER_CHOOSE_GUESS,playerHandler.getName()),playerHandler);
                 guessQuoteFlow();
                 break;
             default:
+                game.broadcast(String.format(PLAYER_CHOOSE_A_VOWEL,playerHandler.getName()),playerHandler);
                 vowelFlow();
                 break;
         }
 
-        game.broadcast(CHOSEN_LETTERS + "[" + game.getListOfChosenLetters() + "]\n");
-        game.broadcast(game.prepareQuoteToGame());
+        game.broadcast(String.format(CHOSEN_LETTERS,game.getListOfChosenLetters()));
 
     }
 
@@ -109,6 +110,7 @@ public class MoneyHandler implements CommandHandler {
 
     private void guessQuoteFlow() {
         playerHandler.send(GUESS_QUOTE);
+        playerHandler.send(game.prepareQuoteToGame());
         String answer;
         answer=getMessageFromBuffer();
         if(answer==null){
@@ -122,7 +124,7 @@ public class MoneyHandler implements CommandHandler {
                         .toLowerCase()
                         .replaceAll("[^a-z]",""))) {
             Arrays.stream(game.getQuoteToGuess().split("")).forEach(game::addPlayerLetters);
-            game.broadcast(String.format(PLAYER_WON,playerHandler.getName(),answer));
+            game.broadcast(String.format(PLAYER_WON,playerHandler.getName(),playerHandler.getPlayerCash(),answer));
             game.endGame();
             return;
         }
