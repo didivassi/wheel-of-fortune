@@ -24,10 +24,10 @@ public class Game implements Runnable {
     private static final int MAX_NUM_OF_PLAYERS = 3;
     private final Server server;
     private final List<String> gameQuotes;
-    private final List<PlayerHandler> listOfPlayers;
+    private volatile List<PlayerHandler> listOfPlayers;
     private final ExecutorService service;
-    private boolean isGameEnded;
-    private boolean isGameStarted;
+    private volatile boolean isGameEnded;
+    private volatile boolean isGameStarted;
     private String quoteToGuess;
     private final Set<String> playerLetters;
     private Wheel wheel;
@@ -54,13 +54,13 @@ public class Game implements Runnable {
                 }
             } catch (IOException e) {
                 e.printStackTrace();
-                removeFromServerList();
+                endGame();
             }
             if (isGameStarted && !isGameEnded) {
                 doTurn();
             }
         }
-        removeFromServerList();
+        endGame();
     }
 
     public boolean isAcceptingPlayers() {
@@ -155,7 +155,9 @@ public class Game implements Runnable {
     public void endGame() {
         removeFromServerList();
         broadcast(GAME_END);
-        listOfPlayers.forEach(PlayerHandler::quit);
+        listOfPlayers.stream()
+                .filter(p ->!p.hasLef)
+                .forEach(PlayerHandler::quit);
         isGameEnded = true;
     }
 
