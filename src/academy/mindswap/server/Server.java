@@ -13,10 +13,13 @@ public class Server {
 
     private ExecutorService gamesService;
     private final List<Game> gameList;
+    private final List<Future> threadsList;
 
 
     public Server() {
+
         gameList = new LinkedList<>();
+        threadsList =  new LinkedList<>();
     }
 
     /**
@@ -84,6 +87,8 @@ public class Server {
         Game game=new Game(this);
         gameList.add(game);
         gamesService.execute(game);
+        //threadsList.add(gamesService.submit(game));
+        //showThreads("Created");
     }
 
     /**
@@ -103,8 +108,20 @@ public class Server {
     }
 
     public synchronized void removeGameFromList(Game game){
-        gameList.remove(game);
-        System.out.println("Game removed from server");
+        if(gameList.contains(game)){
+            gameList.remove(game);
+        }
+       // showThreads("Removed");
+       // System.out.println("Game removed from server");
+    }
+
+    public void showThreads(String  when){
+        System.out.println(when);
+        threadsList.forEach(t -> {
+            System.out.println(t);
+            System.out.println(t.isDone());
+            System.out.println(t.isCancelled());
+        });
     }
 
 
