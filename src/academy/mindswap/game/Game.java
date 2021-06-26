@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
 
 public class Game implements Runnable {
 
-    private static final int MAX_NUM_OF_PLAYERS = 1;
+    private static final int MAX_NUM_OF_PLAYERS = 3;
     private final Server server;
     private final List<String> gameQuotes;
     private volatile List<PlayerHandler> listOfPlayers;
