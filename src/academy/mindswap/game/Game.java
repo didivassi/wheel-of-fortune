@@ -144,6 +144,13 @@ public class Game implements Runnable {
                 .forEach(player -> player.send(message));
     }
 
+    public synchronized void broadcast(String message, PlayerHandler doNotBroadcast) {
+        listOfPlayers.stream()
+                .filter(p ->!p.hasLef)
+                .filter(p ->!p.equals(doNotBroadcast))
+                .forEach(player -> player.send(message));
+    }
+
     public void areStillPlayersPlaying(){
        if( listOfPlayers.stream()
                 .filter(p ->p.hasLef).count() == MAX_NUM_OF_PLAYERS) {
