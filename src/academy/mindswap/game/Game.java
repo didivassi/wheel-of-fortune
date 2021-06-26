@@ -12,6 +12,9 @@ package academy.mindswap.game;
 import static academy.mindswap.game.messages.GameMessages.*;
 
 import academy.mindswap.game.commands.Command;
+import academy.mindswap.game.wheel.NoWheelException;
+import academy.mindswap.game.wheel.NullGameException;
+import academy.mindswap.game.wheel.Wheel;
 import academy.mindswap.server.Server;
 
 import java.io.BufferedReader;
@@ -69,7 +72,13 @@ public class Game implements Runnable {
             }
 
             if (isGameStarted && !isGameEnded) {
-                doTurn();
+                try {
+                    doTurn();
+                }catch (NoWheelException | NullGameException e){
+                    System.out.println(e.getMessage());
+                    endGame();
+                }
+
             }
         }
         endGame();
@@ -135,14 +144,16 @@ public class Game implements Runnable {
      * Informs all the players the cash of each player.
      * Check if the game is ended.
      */
-    private synchronized void doTurn() {
+    private synchronized void doTurn() throws NoWheelException, NullGameException {
         for (PlayerHandler playerHandler : listOfPlayers) {
             if (!playerHandler.hasLeft()) {
 
                 broadcast(String.format(PLAYER_TURN, playerHandler.getName()));
+
                 Command command = wheel.spinWheel();
                 broadcast(SPIN_WHEEL);
                 wheel.animate(command, 1, this);
+
                 try {
                     command.getHandler().execute(this, playerHandler);
                 } catch (NullPointerException e) {
