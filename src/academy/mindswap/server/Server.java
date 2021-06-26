@@ -1,5 +1,15 @@
+/*
+ * @(#)Server.java        1.0 28/06/2021
+ *
+ * Copyright (c) MindSwap Academy - Manuela Dourado, Filipa Bastos & Diogo Velho
+ * All rights reserved.
+ *
+ * This software was produced to become our first group project.
+ */
+
 package academy.mindswap.server;
 
+import static academy.mindswap.server.Messages.*;
 import academy.mindswap.game.Game;
 
 import java.io.IOException;
@@ -9,16 +19,23 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.*;
 
+/**
+ *Class responsible for creating the server that will start a game and listen to players
+ * When a player arrives his socket will be sent to the available game
+ * If a game is already full and not accepting players it creates a new game to accept new players.
+ *
+ */
 public class Server {
 
     private ExecutorService gamesService;
     private final List<Game> gameList;
-    private final List<Future> threadsList;
 
-
+    /**
+     * Constructor method from Server class
+     * Creates a list that will hold the active games
+     */
     public Server() {
         gameList = new LinkedList<>();
-        threadsList =  new LinkedList<>();
     }
 
     /**
@@ -28,21 +45,32 @@ public class Server {
      */
     public static void main(String[] args) {
         Server server = new Server();
-        int port = 8080;
-        try {
-            if (args.length>0) {
-                port = Integer.parseInt(args[0]);
-            }
-        }catch (NumberFormatException e) {
-            System.out.println("Not valid Args");
-            System.exit(1);
-        }
+        int port = server.getServerPort(args);
 
         try {
             server.start(port);
         }catch (RejectedExecutionException | IOException e){
             System.out.println(e.getMessage());
         }
+    }
+
+    /**
+     * Parses the args given to main method.
+     * Exits with error 1 if an illegal port number was provided as argument
+     * @param args the arguments provided to main method
+     * @return port 8080 if no port was provided to main, otherwise uses the provided port
+     */
+    private int getServerPort(String[] args){
+        int port = 8080;
+        try {
+            if (args.length>0) {
+                port = Integer.parseInt(args[0]);
+            }
+        }catch (NumberFormatException e) {
+            System.out.println(NOT_VALID_ARGS);
+            System.exit(1);
+        }
+        return port;
     }
 
     /**
@@ -56,17 +84,19 @@ public class Server {
     public void start(int port) throws RejectedExecutionException, IOException {
         ServerSocket serverSocket = new ServerSocket(port);
         gamesService = Executors.newCachedThreadPool();
-        System.out.println("Server Started at port "+ port);
+
+        System.out.printf(SERVER_PORT, port);
 
         while (serverSocket.isBound()) {
+
             if (!isGameAvailable() ){
                 createGame();
-                System.out.println("Game Started");
+                System.out.println(NEW_GAME);
             }
 
             if (getAvailableGame().isPresent()) {
                 getAvailableGame().get().acceptPlayer(serverSocket.accept());
-                System.out.println("Player added to game");
+                System.out.println(PLAYER_ADDED_TO_GAME);
 
               try{ //Give some time to start another game or an error will occur
                    Thread.sleep(40);
@@ -106,15 +136,14 @@ public class Server {
     }
 
     /**
-     * Removes a game from the gameList. This method is invoked by the game itseld
+     * Removes a game from the gameList. This method is invoked by the game itself
      * @param game the game object to be removed.
      */
     public synchronized void removeGameFromList(Game game){
         if(gameList.contains(game)){
             gameList.remove(game);
-            System.out.println("Game removed from server");
+            System.out.println(GAME_REMOVED);
         }
     }
-
 
 }
