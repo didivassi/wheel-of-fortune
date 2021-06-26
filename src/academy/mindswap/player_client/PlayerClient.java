@@ -37,7 +37,6 @@ public class PlayerClient {
     /**
      * Starts the player in specified port
      * Create a new thread to send messages to game
-     *
      * @throws IOException
      */
     public void startPlay() throws IOException {
@@ -47,6 +46,10 @@ public class PlayerClient {
         receiveMessageGame();
     }
 
+    /**
+     *
+     * @throws IOException
+     */
     public void receiveMessageGame() throws IOException {
         BufferedReader in = new BufferedReader(new InputStreamReader(playerSocket.getInputStream()));
         StringBuilder command = new StringBuilder();
@@ -117,19 +120,19 @@ public class PlayerClient {
     }
 
     /**
-     *
+     * SendMessages Inner class implements the interface Runnable.
      */
     private class SendMessages implements Runnable {
         /**
-         *
+         * Read the input in console from the player
          */
         @Override
         public void run() {
             try {
                 PrintWriter out = new PrintWriter(playerSocket.getOutputStream(), true);
-                BufferedReader inr = new BufferedReader(new InputStreamReader(System.in));
+                BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
                 String message;
-                while ((message = inr.readLine())!=null) {
+                while ((message = in.readLine())!=null) {
                     if (isPlayerTurn) {
                         out.println(message);
                     }
