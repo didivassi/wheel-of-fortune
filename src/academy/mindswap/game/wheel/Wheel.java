@@ -136,7 +136,10 @@ public class Wheel {
     }
 
     /**
-     *
+     * Method responsible for broadcasting to players clients the wheel animation.
+     * It goes trough the created wheel and sends a substring of 9 chars followed by a \r
+     * to clear the line on PlayerClient's console.
+     * For the animation to work the PlayerClient's must be reading the sent message char by char.
      * @param luckyOption the Command from the enum Command that will be shown at the end of the class
      * @param turns the amount of turns that wheel will spin before stop
      * @param game the needed game object with a broadcast method to use to send the spinning animation to the players
@@ -154,6 +157,7 @@ public class Wheel {
         String anim=wheel.stream().map(Command::toString).collect(Collectors.joining(" | "));
         int sleep=10;
         game.broadcast("\n");
+
         for (int i = 0; i <= turns; i++) {
 
             for (int j = 0; j < anim.length()-9 ; j++) {
