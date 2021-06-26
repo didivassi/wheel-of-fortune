@@ -110,9 +110,11 @@ public class Server {
     public synchronized void removeGameFromList(Game game){
         if(gameList.contains(game)){
             gameList.remove(game);
+            System.out.println("Game removed from server");
         }
+
        // showThreads("Removed");
-       // System.out.println("Game removed from server");
+
     }
 
     public void showThreads(String  when){
