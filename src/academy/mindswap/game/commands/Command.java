@@ -1,5 +1,8 @@
 package academy.mindswap.game.commands;
 
+/**
+ * Commands that are available to be used by the wheel in each game
+ */
 
 public enum Command {
     BANKRUPT("Bankrupt", new BankruptHandler(),true),
@@ -15,6 +18,12 @@ public enum Command {
     private CommandHandler handler;
     private boolean isPenalty;
 
+    /**
+     * Method constructor of the enum command this accept three arguments
+     * @param description represents the name of the command
+     * @param handler represents the command that will receive and need to be handler
+     * @param isPenalty represents if player will received money
+     */
     Command(String description, CommandHandler handler, boolean isPenalty) {
         this.description = description;
         this.handler = handler;
@@ -22,14 +31,26 @@ public enum Command {
 
     }
 
+    /**
+     * Allows to know what command that will be used
+     * @return the command
+     */
     public CommandHandler getHandler () {
         return handler;
     }
 
+    /**
+     * Verify if the isPenalty is true and the player doesn't received money or if false he receives money to player
+     * @return returns true or false that represents the penalty of command
+     */
     public boolean isPenalty() {
         return isPenalty;
     }
 
+    /**
+     *
+     * @return the description of the command when is instanced
+     */
     @Override
     public String toString(){
         return description;
