@@ -26,12 +26,12 @@ public class Server {
      */
     public static void main(String[] args) {
         Server server = new Server();
-        int port =8080;
+        int port = 8080;
         try {
-            if(args.length>0) {
+            if (args.length>0) {
                 port = Integer.parseInt(args[0]);
             }
-        }catch (NumberFormatException e){
+        }catch (NumberFormatException e) {
             System.out.println("Not valid Args");
             System.exit(1);
         }
@@ -56,18 +56,19 @@ public class Server {
         gamesService = Executors.newCachedThreadPool();
         System.out.println("Server Started at port "+ port);
         while (serverSocket.isBound()) {
-            if(!isGameAvailable()){
+            if (!isGameAvailable() ){
                 createGame();
-               // System.out.println("game created");
+                System.out.println("Game Started");
             }
-            if(getAvailableGame().isPresent()){
-                //System.out.println("waitng for players");
+
+            if (getAvailableGame().isPresent()) {
                 getAvailableGame().get().acceptPlayer(serverSocket.accept());
-                //System.out.println("player added to game");
+                System.out.println("Player added to game");
+
               try{
                    Thread.sleep(40);
-               }catch (InterruptedException e){
-
+               }catch (InterruptedException e) {
+                  System.out.println(e.getMessage());
                }
 
             }
@@ -97,12 +98,13 @@ public class Server {
      * Goes through the gameList of the server and returns an available game
      * @return returns the first available game that can accept a player
      */
-    private synchronized Optional<Game> getAvailableGame(){
+    private synchronized Optional<Game> getAvailableGame() {
         return gameList.stream().filter(Game::isAcceptingPlayers).findFirst();
     }
 
     public synchronized void removeGameFromList(Game game){
         gameList.remove(game);
+        System.out.println("Game removed from server");
     }
 
 
