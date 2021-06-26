@@ -11,7 +11,7 @@ public interface CommandHandler {
      *This method represent the action that each player will have
      * @param game represent the instance of a member class game
      * @param playerHandler o access the properties and methods of player
-     * @throws NullPointerException
+     * @throws NullPointerException when player closes the socket on this side
      */
     void execute (Game game, Game.PlayerHandler playerHandler) throws NullPointerException;
 }

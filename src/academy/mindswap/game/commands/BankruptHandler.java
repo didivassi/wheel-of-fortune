@@ -1,7 +1,8 @@
 package academy.mindswap.game.commands;
 
-import academy.mindswap.game.Game;
 import static academy.mindswap.game.messages.GameMessages.*;
+
+import academy.mindswap.game.Game;
 
 /**
  * If the spin lands bankrupt the player lose all the money that have in cash and don´t play

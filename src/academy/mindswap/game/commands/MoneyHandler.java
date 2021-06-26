@@ -1,27 +1,42 @@
 package academy.mindswap.game.commands;
 
-import academy.mindswap.game.Game;
-
-import java.util.Arrays;
-
 import static academy.mindswap.game.messages.GameMessages.*;
 
+import academy.mindswap.game.Game;
+import java.util.Arrays;
+
+/**
+ *If the spin lands money the player will have the opportunity to choose three options and than receive the money
+ */
 public class MoneyHandler implements CommandHandler {
 
     private final int bonus;
     private Game game;
     private Game.PlayerHandler playerHandler;
 
+    /**
+     * Method constructor that receive one argument
+     * @param bonus refers to the money that player can win
+     */
     public MoneyHandler(int bonus) {
         this.bonus = bonus;
     }
 
+    /**
+     * Execute the methods of money handler
+     * Defined a local variable as regex to limit the answer of the player
+     *
+     * Check if the player have enough money to buy a vowel, and change the local variable if don't have money
+     * @param game represent the instance of a member class game
+     * @param playerHandler o access the properties and methods of player
+     * @throws NullPointerException when player closes the socket on this side
+     */
     @Override
     public void execute(Game game, Game.PlayerHandler playerHandler) throws NullPointerException{
-        this.game=game;
-        this.playerHandler=playerHandler;
+        this.game = game;
+        this.playerHandler = playerHandler;
         String optionsRegex = "[abc]";
-        String message=MONEY_OPTIONS;
+        String message = MONEY_OPTIONS;
         String option;
         if(playerHandler.getPlayerCash()<3000){
             optionsRegex = "[ab]";
@@ -29,7 +44,7 @@ public class MoneyHandler implements CommandHandler {
         }
         game.broadcast(String.format (WAITING_PLAYER_OPTION,playerHandler.getName()),playerHandler);
         option = getPlayerAnswer(message, optionsRegex, playerHandler.getName() + INVALID_OPTION);
-        if (option==null){  //occurs when suddenly a player closes client
+        if (option==null){      //occurs when suddenly a player closes client
             return;
         }
         switch (option) {
@@ -46,9 +61,7 @@ public class MoneyHandler implements CommandHandler {
                 vowelFlow();
                 break;
         }
-
         game.broadcast(String.format(CHOSEN_LETTERS,game.getListOfChosenLetters()));
-
     }
 
     private String getMessageFromBuffer(){

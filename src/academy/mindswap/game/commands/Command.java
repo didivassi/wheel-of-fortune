@@ -33,7 +33,7 @@ public enum Command {
 
     /**
      * Allows to know what command that will be used
-     * @return the command
+     * @return the enum command
      */
     public CommandHandler getHandler () {
         return handler;
