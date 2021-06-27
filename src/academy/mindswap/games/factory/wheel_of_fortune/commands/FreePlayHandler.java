@@ -7,11 +7,11 @@
  * This software was produced to become our first group project.
  */
 
-package academy.mindswap.game.commands;
+package academy.mindswap.games.factory.wheel_of_fortune.commands;
 
-import static academy.mindswap.game.messages.GameMessages.*;
+import static academy.mindswap.games.factory.wheel_of_fortune.messages.GameMessages.*;
 
-import academy.mindswap.game.Game;
+import academy.mindswap.games.factory.wheel_of_fortune.WheelOfFortune;
 
 
 /**
@@ -26,7 +26,7 @@ public class FreePlayHandler implements CommandHandler{
      * @throws NullPointerException when player closes the socket on this side
      */
     @Override
-    public void execute(Game game, Game.PlayerHandler playerHandler) throws NullPointerException{
+    public void execute(WheelOfFortune game, WheelOfFortune.PlayerHandler playerHandler) throws NullPointerException{
         CommandHandler command = new MoneyHandler(0);
         game.broadcast(String.format(FREE_PLAY,playerHandler.getName()));
         command.execute(game, playerHandler);

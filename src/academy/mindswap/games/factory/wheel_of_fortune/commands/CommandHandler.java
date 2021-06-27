@@ -7,9 +7,11 @@
  * This software was produced to become our first group project.
  */
 
-package academy.mindswap.game.commands;
+package academy.mindswap.games.factory.wheel_of_fortune.commands;
 
-import academy.mindswap.game.Game;
+
+
+import academy.mindswap.games.factory.wheel_of_fortune.WheelOfFortune;
 
 /**
  * All the commands implement the interface command handler
@@ -22,5 +24,5 @@ public interface CommandHandler {
      * @param playerHandler o access the properties and methods of player
      * @throws NullPointerException when player closes the socket on this side
      */
-    void execute (Game game, Game.PlayerHandler playerHandler) throws NullPointerException;
+    void execute (WheelOfFortune game, WheelOfFortune.PlayerHandler playerHandler) throws NullPointerException;
 }

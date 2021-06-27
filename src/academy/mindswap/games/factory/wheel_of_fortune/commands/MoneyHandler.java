@@ -7,11 +7,11 @@
  * This software was produced to become our first group project.
  */
 
-package academy.mindswap.game.commands;
+package academy.mindswap.games.factory.wheel_of_fortune.commands;
 
-import static academy.mindswap.game.messages.GameMessages.*;
+import static academy.mindswap.games.factory.wheel_of_fortune.messages.GameMessages.*;
+import academy.mindswap.games.factory.wheel_of_fortune.WheelOfFortune;
 
-import academy.mindswap.game.Game;
 import java.util.Arrays;
 
 /**
@@ -21,8 +21,8 @@ public class MoneyHandler implements CommandHandler {
 
     private static final int VOWELPRICE = 2000;
     private final int bonus;
-    private Game game;
-    private Game.PlayerHandler playerHandler;
+    private WheelOfFortune game;
+    private WheelOfFortune.PlayerHandler playerHandler;
 
     /**
      * Method constructor that receive one argument
@@ -45,7 +45,7 @@ public class MoneyHandler implements CommandHandler {
      * @throws NullPointerException when player closes the socket on this side
      */
     @Override
-    public void execute(Game game, Game.PlayerHandler playerHandler) throws NullPointerException{
+    public void execute(WheelOfFortune game, WheelOfFortune.PlayerHandler playerHandler) throws NullPointerException{
         this.game = game;
         this.playerHandler = playerHandler;
         String optionsRegex = "[abc]"; // Only accept the words in square brackets from player
@@ -178,7 +178,7 @@ public class MoneyHandler implements CommandHandler {
      */
     private void guessQuoteFlow() {
 
-        playerHandler.send(game.prepareQuoteToGame());
+        playerHandler.send(game.drawBoard());
         playerHandler.send(GUESS_QUOTE);
         String answer;
         answer=getMessageFromBuffer();

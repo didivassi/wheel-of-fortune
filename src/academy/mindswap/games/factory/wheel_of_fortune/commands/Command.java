@@ -7,7 +7,7 @@
  * This software was produced to become our first group project.
  */
 
-package academy.mindswap.game.commands;
+package academy.mindswap.games.factory.wheel_of_fortune.commands;
 
 /**
  * Commands that are available to be used by the wheel in each game

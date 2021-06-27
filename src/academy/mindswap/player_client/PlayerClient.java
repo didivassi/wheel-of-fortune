@@ -1,6 +1,6 @@
 package academy.mindswap.player_client;
 
-import static academy.mindswap.game.messages.GameMessages.*;
+import static academy.mindswap.games.factory.wheel_of_fortune.messages.GameMessages.*;
 import static academy.mindswap.player_client.PlayerMessages.*;
 
 import java.io.BufferedReader;
@@ -39,7 +39,7 @@ public class PlayerClient {
         try {
             playerClient.startPlay(host, port);
         } catch (IOException e) {
-            System.out.println(NOT_CONNECT_SERVER);;
+            System.out.println(NOT_CONNECT_SERVER);
         }
     }
 
@@ -47,7 +47,7 @@ public class PlayerClient {
      * Parses the args given to main method.
      * @param args the arguments provided to main method
      * @return localhost if bo host was provided to main, otherwise uses the provided host
-     * @throws UnknownHostException
+     * @throws UnknownHostException when the host can't be reached
      */
     private InetAddress getServerHost(String[] args) throws UnknownHostException {
         InetAddress host = InetAddress.getLocalHost();
