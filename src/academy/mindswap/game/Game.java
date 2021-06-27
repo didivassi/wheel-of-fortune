@@ -12,6 +12,7 @@ package academy.mindswap.game;
 import static academy.mindswap.game.messages.GameMessages.*;
 
 import academy.mindswap.game.commands.Command;
+import academy.mindswap.game.ascii_art.Board;
 import academy.mindswap.game.wheel.NoWheelException;
 import academy.mindswap.game.wheel.NullGameException;
 import academy.mindswap.game.wheel.Wheel;
@@ -70,7 +71,6 @@ public class Game implements Runnable {
                 wheel = new Wheel();
                 wheel.createWheel(30, 0.25);
             }
-
             if (isGameStarted && !isGameEnded) {
                 try {
                     doTurn();
@@ -192,7 +192,7 @@ public class Game implements Runnable {
     private String generateRandomQuote() {
         int index = (int) (Math.random() * gameQuotes.size());
 
-        return gameQuotes.get(index).concat("\n");
+        return gameQuotes.get(index);
     }
 
     /**
@@ -203,9 +203,9 @@ public class Game implements Runnable {
     public String prepareQuoteToGame() {
         String regex = String.join("", playerLetters);
 
-        return "\n".concat(Arrays.stream(quoteToGuess.split(""))
+        return Board.drawBoard(Arrays.stream(quoteToGuess.split(""))
                 .map(c -> c = c.toLowerCase().matches("[" + regex + "|[^a-z]]") ? c : "#")
-                .collect(Collectors.joining())).concat("\n");
+                .collect(Collectors.joining()), playerLetters);
     }
 
     /**
@@ -343,7 +343,7 @@ public class Game implements Runnable {
             if (name != null) {// if null player left the game by closing connection
                 broadcast(String.format(PLAYER_JOINED, name));
             }
-
+            send(WAITING_FOR_OTHER_PLAYERS);
             while (!isGameEnded) {
                 if (Thread.interrupted()) {
                     return;

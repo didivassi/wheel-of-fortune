@@ -184,13 +184,7 @@ public class MoneyHandler implements CommandHandler {
         if(answer==null){ //occurs when suddenly a player closes client
             return;
         }
-        if (answer
-                .toLowerCase()
-                .replaceAll("[^a-z]","")
-                .equals(game
-                        .getQuoteToGuess()
-                        .toLowerCase()
-                        .replaceAll("[^a-z]",""))) {
+        if (checkIfPlayerGuessedQuote(answer)) {
             Arrays.stream(game.getQuoteToGuess().split("")).forEach(game::addPlayerLetters);
             game.broadcast(String.format(PLAYER_WON,playerHandler.getName(),playerHandler.getPlayerCash(),answer));
             game.endGame();
@@ -198,5 +192,18 @@ public class MoneyHandler implements CommandHandler {
         }
         game.broadcast(String.format(FAIL_ANSWER,playerHandler.getName(),answer) );
     }
+
+
+    private boolean checkIfPlayerGuessedQuote(String answer){
+          return  answer
+                  .toLowerCase()
+                  .replaceAll("[^a-z]","")
+                  .equals(game
+                          .getQuoteToGuess()
+                          .toLowerCase()
+                          .replaceAll("[^a-z]",""));
+    }
+
+
 
 }

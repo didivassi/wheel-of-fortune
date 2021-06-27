@@ -12,6 +12,7 @@ package academy.mindswap.game.messages;
 public final class GameMessages {
     public static final String PERMISSION_TO_TALK = "/talk now\n";
     public static final String ASK_NAME = "Write your name!\n"+PERMISSION_TO_TALK;
+    public static final String WAITING_FOR_OTHER_PLAYERS = "Waiting for other players to join the game...";
     public static final String WELCOME_MESSAGE = "--Welcome to WHEEL OF FORTUNE, be prepared to win!--\n";
     public static final String PLAYER_JOINED = "Player %s joined the game!\n";
     public static final String START_GAME = "\n--The WHEEL OF FORTUNE will start!--\n";
@@ -27,7 +28,7 @@ public final class GameMessages {
     public static final String INVALID_CONSONANT = " Please choose a valid consonant:\n"+PERMISSION_TO_TALK;
     public static final String INVALID_VOWEL = " Please choose a valid vowel:\n"+PERMISSION_TO_TALK;
     public static final String FAIL_ANSWER = "%s has answered %s and... Wrong answer, try again next turn\n\n";
-    public static final String BANKRUPT = "It's bad the player %s loss all money\n";
+    public static final String BANKRUPT = "It's bad luck for %s. Bankrupt means lose all money\n";
     public static final String MONEY_OPTIONS = "Choose one option!\n"+
             "a - Choose a consonant\n" +
             "b - Try to guess the quote\n" +
