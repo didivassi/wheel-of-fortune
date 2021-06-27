@@ -9,6 +9,9 @@
 
 package academy.mindswap.game.messages;
 
+/**
+ * Messages sent to playerClient by the game
+ */
 public final class GameMessages {
     public static final String PERMISSION_TO_TALK = "/talk now\n";
     public static final String ASK_NAME = "Write your name!\n"+PERMISSION_TO_TALK;
