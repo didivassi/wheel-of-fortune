@@ -349,11 +349,13 @@ public class WheelOfFortune extends Game {
         public void run() {
 
             addPlayerToList(this);
+
             send(ASK_NAME);
-            name = getAnswer();
-            if (name != null) {// if null player left the game by closing connection
-                broadcast(String.format(PLAYER_JOINED, name));
+            while ((name = getAnswer()).equals("")){
+                send(ASK_NAME);
             }
+
+            broadcast(String.format(PLAYER_JOINED, name));
             send(WAITING_FOR_OTHER_PLAYERS);
             while (!isGameEnded) {
                 if (Thread.interrupted()) {
