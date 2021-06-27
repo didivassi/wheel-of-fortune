@@ -38,4 +38,7 @@ public abstract class Game implements GameController {
     public void removeFromServerList() {
         server.removeGameFromList(this);
     }
+
+
+
 }

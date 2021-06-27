@@ -1,9 +1,8 @@
-package academy.mindswap.game.ascii_art;
+package academy.mindswap.games.factory.wheel_of_fortune.ascii_art;
 
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 public class Board {
 

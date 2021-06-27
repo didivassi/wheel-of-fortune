@@ -6,10 +6,10 @@
  *
  * This software was produced to become our first group project.
  */
-package academy.mindswap.game.wheel;
+package academy.mindswap.games.factory.wheel_of_fortune.wheel;
 
-import academy.mindswap.game.Game;
-import academy.mindswap.game.commands.Command;
+import academy.mindswap.games.factory.wheel_of_fortune.WheelOfFortune;
+import academy.mindswap.games.factory.wheel_of_fortune.commands.Command;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -146,7 +146,7 @@ public class Wheel {
      * @throws NoWheelException when no wheel was created before invoking this method
      * @throws NullGameException when the provided game object is null
      */
-    public void animate(Command luckyOption, int turns, Game game) throws NoWheelException, NullGameException  {
+    public void animate(Command luckyOption, int turns, WheelOfFortune game) throws NoWheelException, NullGameException  {
         if(wheel.size()==0){
             throw new NoWheelException();
         }
