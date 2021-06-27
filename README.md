@@ -1,4 +1,4 @@
 # wheel-of-fortune
 
+![alt text](https://github.com/didivassi/wheel-of-fortune/blob/master/Extras/Images/ScreenPlay.png?raw=true)
 
-![alt text](https://github.com/didivassi/wheel-of-fortune/blob/master/ScreenPlay.png?raw=true)
