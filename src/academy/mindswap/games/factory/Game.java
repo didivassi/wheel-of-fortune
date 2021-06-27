@@ -9,8 +9,6 @@
 
 package academy.mindswap.games.factory;
 
-import academy.mindswap.games.factory.GameController;
-import academy.mindswap.games.factory.GameType;
 import academy.mindswap.server.Server;
 
 /**

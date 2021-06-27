@@ -1,3 +1,12 @@
+/*
+ * @(#)PlayerClient.java        1.0 28/06/2021
+ *
+ * Copyright (c) MindSwap Academy - Manuela Dourado, Filipa Bastos & Diogo Velho
+ * All rights reserved.
+ *
+ * This software was produced to become our first group project.
+ */
+
 package academy.mindswap.player_client;
 
 import static academy.mindswap.games.factory.wheel_of_fortune.messages.GameMessages.*;
