@@ -1,5 +1,5 @@
 /*
- * @(#)Server.java        1.0 28/06/2021
+ * @(#)FreePlayHandler.java        1.0 28/06/2021
  *
  * Copyright (c) MindSwap Academy - Manuela Dourado, Filipa Bastos & Diogo Velho
  * All rights reserved.
