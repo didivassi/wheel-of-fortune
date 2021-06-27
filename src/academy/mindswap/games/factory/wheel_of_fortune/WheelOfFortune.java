@@ -138,7 +138,6 @@ public class WheelOfFortune extends Game {
         addQuoteToList();
         broadcast(START_GAME);
         quoteToGuess = generateRandomQuote();
-        broadcast(THIS_IS_THE_QUOTE);
         broadcast(drawBoard());
     }
 

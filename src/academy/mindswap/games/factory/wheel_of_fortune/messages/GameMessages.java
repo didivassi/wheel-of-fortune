@@ -29,7 +29,9 @@ public final class GameMessages {
     public static final String CHOOSE_A_VOWEL = " Please choose a vowel:\n"+PERMISSION_TO_TALK;
     public static final String GUESS_QUOTE = "Please try to guess the quote:" + "\n" + PERMISSION_TO_TALK;
     public static final String INVALID_CONSONANT = " Please choose a valid consonant:\n"+PERMISSION_TO_TALK;
+    public static final String INVALID_DOUBLE_CONSONANT = " Please choose another consonant. It's already chosen:\n"+PERMISSION_TO_TALK;
     public static final String INVALID_VOWEL = " Please choose a valid vowel:\n"+PERMISSION_TO_TALK;
+    public static final String INVALID_DOUBLE_VOWEL = " Please choose another vowel. It's already chosen:\n"+PERMISSION_TO_TALK;
     public static final String FAIL_ANSWER = "%s has answered %s and... Wrong answer, try again next turn\n\n";
     public static final String BANKRUPT = "It's bad luck for %s. Bankrupt means lose all money\n";
     public static final String MONEY_OPTIONS = "Choose one option!\n"+

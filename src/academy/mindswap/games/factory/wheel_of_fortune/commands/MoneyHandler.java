@@ -10,16 +10,19 @@
 package academy.mindswap.games.factory.wheel_of_fortune.commands;
 
 import static academy.mindswap.games.factory.wheel_of_fortune.messages.GameMessages.*;
+import static academy.mindswap.games.factory.wheel_of_fortune.ascii_art.BigWinner.*;
 import academy.mindswap.games.factory.wheel_of_fortune.WheelOfFortune;
 
 import java.util.Arrays;
+import java.util.stream.Collectors;
 
 /**
  * If the spin lands money the player will have the opportunity to choose three options and than receive the money
  */
 public class MoneyHandler implements CommandHandler {
 
-    private static final int VOWELPRICE = 2000;
+    private static final int VOWEL_PRICE = 2000;
+    private static final int WINNER_BONUS = 10000;
     private final int bonus;
     private WheelOfFortune game;
     private WheelOfFortune.PlayerHandler playerHandler;
@@ -51,7 +54,7 @@ public class MoneyHandler implements CommandHandler {
         String optionsRegex = "[abc]"; // Only accept the words in square brackets from player
         String message = MONEY_OPTIONS;
         String option;
-        if(playerHandler.getPlayerCash()<VOWELPRICE){
+        if(playerHandler.getPlayerCash()<VOWEL_PRICE){
             optionsRegex = "[ab]";
             message= NO_MONEY_BUY_VOWEL;
         }
@@ -99,7 +102,7 @@ public class MoneyHandler implements CommandHandler {
         playerHandler.send(messageToSend);
         String answer;
         answer=getMessageFromBuffer();
-        while (!validateAnswer(answer, regex)  && answer!=null) {
+        while (!validateAnswer(answer, regex)  &&  answer!=null) {
             playerHandler.send(playerHandler.getName() + invalidMessage);
             answer = getMessageFromBuffer();
         }
@@ -140,6 +143,28 @@ public class MoneyHandler implements CommandHandler {
     }
 
     /**
+     * Checks is a letter was already chosen by a player
+     *
+     * @param letter A String containing the letter
+     * @return true if it was already chosen, false otherwise
+     */
+    private boolean checkedIfLetterIsDoubled(String letter){
+        return  Arrays.stream(game.getListOfChosenLetters()
+                .split(", "))
+                .anyMatch(l->l.equals(letter));
+    }
+
+    private String getAlreadyChosenRegex( boolean isVowel){
+        String regex=String.join("", game.getListOfChosenLetters().split(", "));
+        if(isVowel){
+            regex=  "[aeiou&&[^".concat(regex).concat("]]");
+        }else {
+            regex= "[a-z&&[^aeiou".concat(regex).concat("]]");
+        }
+        return regex;
+    }
+
+    /**
      * Ask a player to pick an consonant
      * Add the consonant that player send to the letters array
      * Check if the consonant exist in quote
@@ -149,6 +174,9 @@ public class MoneyHandler implements CommandHandler {
         String consonant;
 
         consonant=getPlayerAnswer(CHOOSE_A_CONSONANT, consonantRegex, INVALID_CONSONANT);
+        while (checkedIfLetterIsDoubled(consonant)) {
+            consonant=getPlayerAnswer(INVALID_DOUBLE_CONSONANT, getAlreadyChosenRegex(false), INVALID_DOUBLE_CONSONANT);
+        }
         game.addPlayerLetters(consonant);
         playerGuessedLetter(consonant);
     }
@@ -163,8 +191,10 @@ public class MoneyHandler implements CommandHandler {
         String vowelRegex = "[aeiou]"; //Only accept vowels
         String vowel;
         vowel=getPlayerAnswer(CHOOSE_A_VOWEL, vowelRegex, INVALID_VOWEL);
-
-        playerHandler.removeCash(VOWELPRICE);
+        while (checkedIfLetterIsDoubled(vowel)) {
+            vowel=getPlayerAnswer(INVALID_DOUBLE_VOWEL, getAlreadyChosenRegex(true), INVALID_DOUBLE_VOWEL);
+        }
+        playerHandler.removeCash(VOWEL_PRICE);
         game.addPlayerLetters(vowel);
         playerGuessedLetter(vowel);
     }
@@ -187,7 +217,8 @@ public class MoneyHandler implements CommandHandler {
         }
         if (checkIfPlayerGuessedQuote(answer)) {
             Arrays.stream(game.getQuoteToGuess().split("")).forEach(game::addPlayerLetters);
-            game.broadcast(String.format(PLAYER_WON,playerHandler.getName(),playerHandler.getPlayerCash(),answer));
+            game.broadcast(BIG_WINNER);
+            game.broadcast(String.format(PLAYER_WON,playerHandler.getName(),playerHandler.getPlayerCash()+WINNER_BONUS,answer));
             game.endGame();
             return;
         }
