@@ -21,7 +21,7 @@ public final class GameMessages {
     public static final String PLAYER_CHOOSE_A_CONSONANT = "We're waiting for %s to guess a consonant...\n";
     public static final String PLAYER_CHOOSE_A_VOWEL = "We're waiting for %s to guess a vowel...\n";
     public static final String PLAYER_CHOOSE_GUESS = "We're waiting for %s to guess the quote...\n";
-    public static final String CHOOSE_A_CONSONANT = " Please choose a consonant:\n"+PERMISSION_TO_TALK;
+    public static final String CHOOSE_A_CONSONANT = "%s Please choose a consonant:\n"+PERMISSION_TO_TALK;
     public static final String CHOOSE_A_VOWEL = " Please choose a vowel:\n"+PERMISSION_TO_TALK;
     public static final String GUESS_QUOTE = "Please try to guess the quote:" + "\n" + PERMISSION_TO_TALK;
     public static final String INVALID_CONSONANT = " Please choose a valid consonant:\n"+PERMISSION_TO_TALK;
