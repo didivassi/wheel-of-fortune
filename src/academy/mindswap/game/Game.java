@@ -163,7 +163,7 @@ public class Game implements Runnable {
                     continue;
                 }
                 broadcast(prepareQuoteToGame());
-                broadcast(getPlayersCash());
+               // broadcast(getPlayersCash());
             }
             if (isGameEnded) {
                 return;

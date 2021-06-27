@@ -66,11 +66,17 @@ public class PlayerClient {
                 buildingCommand = checkCommandEnd(letter);
                 if (!buildingCommand) {
                     isPlayerTurn = canTalk(command.toString());
+                    if(!isPlayerTurn){
+                        System.out.print(command);
+                    }
                     command.delete(0, command.length());
                 }
-            } else {
+            }else {
                 System.out.print(letter);
             }
+
+
+
         }
         quit();
     }
