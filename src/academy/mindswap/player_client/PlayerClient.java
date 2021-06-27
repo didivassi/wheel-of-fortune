@@ -9,8 +9,8 @@
 
 package academy.mindswap.player_client;
 
-import static academy.mindswap.games.factory.wheel_of_fortune.messages.GameMessages.*;
 import static academy.mindswap.player_client.PlayerMessages.*;
+import static academy.mindswap.games_factory.wheel_of_fortune.messages.GameMessages.*;
 
 import java.io.BufferedReader;
 import java.io.IOException;

@@ -11,9 +11,9 @@ package academy.mindswap.server;
 
 import static academy.mindswap.server.Messages.*;
 
-import academy.mindswap.games.factory.Game;
-import academy.mindswap.games.factory.GameType;
-import academy.mindswap.games.factory.GamesFactory;
+import academy.mindswap.games_factory.Game;
+import academy.mindswap.games_factory.GameType;
+import academy.mindswap.games_factory.GamesFactory;
 
 import java.io.IOException;
 import java.net.ServerSocket;
