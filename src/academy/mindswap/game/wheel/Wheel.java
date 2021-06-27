@@ -128,7 +128,7 @@ public class Wheel {
      * @throws NoWheelException when no wheel was created before invoking this method
      */
     public Command spinWheel() throws NoWheelException{
-        if(wheel==null){
+        if(wheel.size()==0){
             throw new NoWheelException();
         }
 
@@ -147,7 +147,7 @@ public class Wheel {
      * @throws NullGameException when the provided game object is null
      */
     public void animate(Command luckyOption, int turns, Game game) throws NoWheelException, NullGameException  {
-        if(wheel==null){
+        if(wheel.size()==0){
             throw new NoWheelException();
         }
         if (game==null){
@@ -173,7 +173,7 @@ public class Wheel {
             sleep+=20;
         }
 
-        game.broadcast("\r" + "| " + luckyOption.toString() +" |\n");
+        game.broadcast("\r" + "| " + luckyOption.toString() +" | <- The wheel says\n");
         game.broadcast("\n");
     }
 
