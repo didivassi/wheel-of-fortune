@@ -1,0 +1,315 @@
+@startuml
+
+title __WHEEL-OF-FORTUNE's Class Diagram__\n
+
+  namespace academy.mindswap.game {
+    class academy.mindswap.game.Game {
+    }
+  }
+  
+
+  namespace academy.mindswap.game {
+    class academy.mindswap.game.Game {
+    }
+  }
+  
+
+  namespace academy.mindswap.game {
+    class academy.mindswap.game.Game {
+    }
+  }
+  
+
+  namespace academy.mindswap.game {
+    namespace _factory {
+      abstract class academy.mindswap.games_factory.Game {
+      }
+    }
+  }
+  
+
+  namespace academy.mindswap.game {
+    namespace _factory {
+      interface academy.mindswap.games_factory.GameController {
+      }
+    }
+  }
+  
+
+  namespace academy.mindswap.game {
+    namespace _factory {
+      enum GameType {
+      }
+    }
+  }
+  
+
+  namespace academy.mindswap.game {
+    namespace _factory {
+      class academy.mindswap.games_factory.GamesFactory {
+      }
+    }
+  }
+  
+
+  namespace academy.mindswap.game {
+    namespace _factory {
+      namespace bingo {
+        class academy.mindswap.games_factory.bingo.Bingo {
+        }
+      }
+    }
+  }
+  
+
+  namespace academy.mindswap.game {
+    namespace _factory {
+      namespace quiz {
+        class academy.mindswap.games_factory.quiz.Quiz {
+        }
+      }
+    }
+  }
+  
+
+  namespace academy.mindswap.game {
+    namespace _factory {
+      namespace wheel_of_fortune {
+        class academy.mindswap.games_factory.wheel_of_fortune.WheelOfFortune {
+        }
+      }
+    }
+  }
+  
+
+  namespace academy.mindswap.game {
+    namespace _factory {
+      namespace wheel_of_fortune {
+        namespace ascii_art {
+          class academy.mindswap.games_factory.wheel_of_fortune.ascii_art.BigWinner {
+          }
+        }
+      }
+    }
+  }
+  
+
+  namespace academy.mindswap.game {
+    namespace _factory {
+      namespace wheel_of_fortune {
+        namespace ascii_art {
+          class academy.mindswap.games_factory.wheel_of_fortune.ascii_art.Board {
+          }
+        }
+      }
+    }
+  }
+  
+
+  namespace academy.mindswap.game {
+    namespace _factory {
+      namespace wheel_of_fortune {
+        namespace commands {
+          class academy.mindswap.games_factory.wheel_of_fortune.commands.BankruptHandler {
+          }
+        }
+      }
+    }
+  }
+  
+
+  namespace academy.mindswap.game {
+    namespace _factory {
+      namespace wheel_of_fortune {
+        namespace commands {
+          enum Command {
+          }
+        }
+      }
+    }
+  }
+  
+
+  namespace academy.mindswap.game {
+    namespace _factory {
+      namespace wheel_of_fortune {
+        namespace commands {
+          interface academy.mindswap.games_factory.wheel_of_fortune.commands.CommandHandler {
+          }
+        }
+      }
+    }
+  }
+  
+
+  namespace academy.mindswap.game {
+    namespace _factory {
+      namespace wheel_of_fortune {
+        namespace commands {
+          class academy.mindswap.games_factory.wheel_of_fortune.commands.FreePlayHandler {
+          }
+        }
+      }
+    }
+  }
+  
+
+  namespace academy.mindswap.game {
+    namespace _factory {
+      namespace wheel_of_fortune {
+        namespace commands {
+          class academy.mindswap.games_factory.wheel_of_fortune.commands.MissTurnHandler {
+          }
+        }
+      }
+    }
+  }
+  
+
+  namespace academy.mindswap.game {
+    namespace _factory {
+      namespace wheel_of_fortune {
+        namespace commands {
+          class academy.mindswap.games_factory.wheel_of_fortune.commands.MoneyHandler {
+          }
+        }
+      }
+    }
+  }
+  
+
+  namespace academy.mindswap.game {
+    namespace _factory {
+      namespace wheel_of_fortune {
+        namespace messages {
+          class academy.mindswap.games_factory.wheel_of_fortune.messages.GameMessages {
+          }
+        }
+      }
+    }
+  }
+  
+
+  namespace academy.mindswap.game {
+    namespace _factory {
+      namespace wheel_of_fortune {
+        namespace wheel {
+          class academy.mindswap.games_factory.wheel_of_fortune.wheel.NoWheelException {
+          }
+        }
+      }
+    }
+  }
+  
+
+  namespace academy.mindswap.game {
+    namespace _factory {
+      namespace wheel_of_fortune {
+        namespace wheel {
+          class academy.mindswap.games_factory.wheel_of_fortune.wheel.NullGameException {
+          }
+        }
+      }
+    }
+  }
+  
+
+  namespace academy.mindswap.game {
+    namespace _factory {
+      namespace wheel_of_fortune {
+        namespace wheel {
+          class academy.mindswap.games_factory.wheel_of_fortune.wheel.Wheel {
+          }
+        }
+      }
+    }
+  }
+  
+
+  namespace academy.mindswap.player_client {
+    class academy.mindswap.player_client.PlayerClient {
+    }
+  }
+  
+
+  namespace academy.mindswap.player_client {
+    class academy.mindswap.player_client.PlayerMessages {
+    }
+  }
+  
+
+  namespace academy.mindswap.server {
+    class academy.mindswap.server.Messages {
+    }
+  }
+  
+
+  namespace academy.mindswap.server {
+    class academy.mindswap.server.Server {
+    }
+  }
+  
+
+  namespace academy.mindswap.server {
+    class academy.mindswap.server.Server {
+    }
+  }
+  
+
+  namespace academy.mindswap.server {
+    class academy.mindswap.server.Server {
+    }
+  }
+  
+
+  namespace academy.mindswap.server {
+    class academy.mindswap.server.Server {
+    }
+  }
+  
+
+  namespace academy.mindswap.utils {
+    class academy.mindswap.utils.ConsoleHelper {
+    }
+  }
+  
+
+  namespace academy.mindswap.utils {
+    class academy.mindswap.utils.ConsoleHelper {
+    }
+  }
+  
+
+  namespace academy.mindswap.utils {
+    class academy.mindswap.utils.ConsoleHelper {
+    }
+  }
+  
+
+  academy.mindswap.game.Game .up.|> java.lang.Runnable
+  academy.mindswap.game.Game .up.|> java.lang.Runnable
+  academy.mindswap.game.Game .up.|> java.lang.Runnable
+  academy.mindswap.games_factory.Game .up.|> academy.mindswap.games_factory.GameController
+  academy.mindswap.games_factory.Game o-- academy.mindswap.games_factory.GameType : gameType
+  academy.mindswap.games_factory.Game o-- academy.mindswap.server.Server : server
+  academy.mindswap.games_factory.bingo.Bingo -up-|> academy.mindswap.games_factory.Game
+  academy.mindswap.games_factory.quiz.Quiz -up-|> academy.mindswap.games_factory.Game
+  academy.mindswap.games_factory.wheel_of_fortune.WheelOfFortune -up-|> academy.mindswap.games_factory.Game
+  academy.mindswap.games_factory.wheel_of_fortune.WheelOfFortune o-- academy.mindswap.games_factory.wheel_of_fortune.wheel.Wheel : wheel
+  academy.mindswap.games_factory.wheel_of_fortune.commands.BankruptHandler .up.|> academy.mindswap.games_factory.wheel_of_fortune.commands.CommandHandler
+  academy.mindswap.games_factory.wheel_of_fortune.commands.Command o-- academy.mindswap.games_factory.wheel_of_fortune.commands.CommandHandler : handler
+  academy.mindswap.games_factory.wheel_of_fortune.commands.FreePlayHandler .up.|> academy.mindswap.games_factory.wheel_of_fortune.commands.CommandHandler
+  academy.mindswap.games_factory.wheel_of_fortune.commands.MissTurnHandler .up.|> academy.mindswap.games_factory.wheel_of_fortune.commands.CommandHandler
+  academy.mindswap.games_factory.wheel_of_fortune.commands.MoneyHandler .up.|> academy.mindswap.games_factory.wheel_of_fortune.commands.CommandHandler
+  academy.mindswap.games_factory.wheel_of_fortune.commands.MoneyHandler o-- academy.mindswap.games_factory.wheel_of_fortune.WheelOfFortune : game
+  academy.mindswap.games_factory.wheel_of_fortune.commands.MoneyHandler o-- academy.mindswap.games_factory.wheel_of_fortune.WheelOfFortune.PlayerHandler : playerHandler
+
+
+right footer
+
+
+PlantUML diagram generated by SketchIt! (https://bitbucket.org/pmesmeur/sketch.it)
+For more information about this tool, please contact philippe.mesmeur@gmail.com
+endfooter
+
+@enduml
