@@ -4,7 +4,7 @@
 
 Wheel of fortune is a MindSwap game show created by Manuela Dourado, Filipa Bastos and Diogo Velho.
 This game is an inspired by the Portuguese version hosted by Herman José.
-The game features a competition in which contestants solve word puzzles.
+The game features a competition in which contestants solve word puzzles to win 10000 €, and the money in cash.
 
 Instructions to start:
 
@@ -18,7 +18,7 @@ Instructions to start:
         Free Play;
         Miss Turn;
     
-    The player who guesses the quote wins the game, and the money that he have in cash.
+    The player who guesses the quote wins the game, and the 10000 € plus the money in cash! $$$
 
 Instruction of Wheel:
     
