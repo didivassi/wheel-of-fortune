@@ -313,7 +313,7 @@ public class WheelOfFortune extends Game {
      */
     public class PlayerHandler implements Runnable {
 
-        private String name = null;
+        private String name = "";
         private Socket playerSocket;
         private PrintWriter out;
         private int playerCash;
@@ -351,8 +351,10 @@ public class WheelOfFortune extends Game {
             addPlayerToList(this);
 
             send(ASK_NAME);
-            while ((name = getAnswer()).equals("")){
+            name = getAnswer();
+            while (!name.matches("[a-zA-Z]")){
                 send(ASK_NAME);
+                name = getAnswer();
             }
 
             broadcast(String.format(PLAYER_JOINED, name));
