@@ -177,8 +177,9 @@ public class MoneyHandler implements CommandHandler {
      * If the player have guess the quote the game will end for all the players
      */
     private void guessQuoteFlow() {
-        playerHandler.send(GUESS_QUOTE);
+
         playerHandler.send(game.prepareQuoteToGame());
+        playerHandler.send(GUESS_QUOTE);
         String answer;
         answer=getMessageFromBuffer();
         if(answer==null){ //occurs when suddenly a player closes client
