@@ -133,7 +133,7 @@ public class Game implements Runnable {
         broadcast(START_GAME);
         quoteToGuess = generateRandomQuote();
         broadcast(THIS_IS_THE_QUOTE);
-        broadcast(prepareQuoteToGame());
+        broadcast(drawBoard());
     }
 
     /**
@@ -162,7 +162,7 @@ public class Game implements Runnable {
                     System.out.println("Player didn't existed");
                     continue;
                 }
-                broadcast(prepareQuoteToGame());
+                broadcast(drawBoard());
                // broadcast(getPlayersCash());
             }
             if (isGameEnded) {
@@ -196,16 +196,27 @@ public class Game implements Runnable {
     }
 
     /**
+     * Draws the main board game with game TITLE, quote to guess and player's cash
+     *
+     * @return Returns the actualized quote with the discover letters
+     */
+    public String drawBoard() {
+        List<List<String>> players= listOfPlayers.stream().
+                map(p-> Arrays.asList(p.getName(),p.getPlayerCash()+"€"))
+                .collect(Collectors.toList());
+        return Board.drawBoard(prepareQuoteToGame(), playerLetters, players);
+    }
+
+    /**
      * Prepares the quote to the game by replacing all the letters that wasn't discover by the players in #
      *
      * @return Returns the actualized quote with the discover letters
      */
-    public String prepareQuoteToGame() {
+    private String prepareQuoteToGame(){
         String regex = String.join("", playerLetters);
-
-        return Board.drawBoard(Arrays.stream(quoteToGuess.split(""))
+        return Arrays.stream(quoteToGuess.split(""))
                 .map(c -> c = c.toLowerCase().matches("[" + regex + "|[^a-z]]") ? c : "#")
-                .collect(Collectors.joining()), playerLetters);
+                .collect(Collectors.joining());
     }
 
     /**

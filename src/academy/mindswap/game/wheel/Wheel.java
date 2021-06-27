@@ -157,11 +157,11 @@ public class Wheel {
         String anim=wheel.stream().map(Command::toString).collect(Collectors.joining(" | "));
         int sleep=10;
         game.broadcast("\n");
-        String separator=" _,.-'~'-.,__,.-'~'-.,_ ";
+        String separator=" _,.-'~'-.,__,.-'~'-.,__,.-'~'-.,_ ";
         for (int i = 0; i <= turns; i++) {
 
             for (int j = 0; j < anim.length()-9 ; j++) {
-                game.broadcast("\r"+separator + anim.substring(j,j+9) + separator);
+                game.broadcast("\r  "+separator + anim.substring(j,j+9) + separator);
 
                 try {
                     Thread.sleep(sleep);
@@ -173,7 +173,7 @@ public class Wheel {
             sleep+=20;
         }
 
-        game.broadcast("\r" +separator+ "| " + luckyOption.toString() +" |"+ separator+" <- The wheel says\n");
+        game.broadcast("\r  " +separator+ "| " + luckyOption.toString() +" |"+ separator+" <- The wheel says\n");
         game.broadcast("\n");
     }
 
