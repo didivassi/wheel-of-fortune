@@ -152,6 +152,11 @@ public class MoneyHandler implements CommandHandler {
                 .split(", ")).contains(letter);
     }
 
+    /**
+     * Verifies if a letter given by a player was already chosen
+     * @param isVowel Set it true if you want to check the vowel flow, false for consonant flow
+     * @return true if letter is already present, false if it's not present
+     */
     private String getAlreadyChosenRegex( boolean isVowel){
         String regex=String.join("", game.getListOfChosenLetters().split(", "));
         if(isVowel){
