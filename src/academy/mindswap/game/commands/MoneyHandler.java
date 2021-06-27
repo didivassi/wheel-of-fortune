@@ -178,7 +178,7 @@ public class MoneyHandler implements CommandHandler {
      */
     private void guessQuoteFlow() {
 
-        playerHandler.send(game.prepareQuoteToGame());
+        playerHandler.send(game.drawBoard());
         playerHandler.send(GUESS_QUOTE);
         String answer;
         answer=getMessageFromBuffer();
