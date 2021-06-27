@@ -1,5 +1,5 @@
 /*
- * @(#)Game.java        1.0 28/06/2021
+ * @(#)WheelOfFortune.java        1.0 28/06/2021
  *
  * Copyright (c) MindSwap Academy - Manuela Dourado, Filipa Bastos & Diogo Velho
  * All rights reserved.
@@ -7,15 +7,17 @@
  * This software was produced to become our first group project.
  */
 
-package academy.mindswap.game;
+package academy.mindswap.games.factory.wheel_of_fortune;
 
-import static academy.mindswap.game.messages.GameMessages.*;
+import static academy.mindswap.games.factory.wheel_of_fortune.messages.GameMessages.*;
 
-import academy.mindswap.game.commands.Command;
-import academy.mindswap.game.ascii_art.Board;
-import academy.mindswap.game.wheel.NoWheelException;
-import academy.mindswap.game.wheel.NullGameException;
-import academy.mindswap.game.wheel.Wheel;
+import academy.mindswap.games.factory.Game;
+import academy.mindswap.games.factory.GameType;
+import academy.mindswap.games.factory.wheel_of_fortune.commands.Command;
+import academy.mindswap.games.factory.wheel_of_fortune.ascii_art.Board;
+import academy.mindswap.games.factory.wheel_of_fortune.wheel.NoWheelException;
+import academy.mindswap.games.factory.wheel_of_fortune.wheel.NullGameException;
+import academy.mindswap.games.factory.wheel_of_fortune.wheel.Wheel;
 import academy.mindswap.server.Server;
 
 import java.io.BufferedReader;
@@ -31,13 +33,12 @@ import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 /**
- * Game class implements the interface Runnable, create a thread for each player and connect them to the game.
+ * WheelOfFortune is a game type and a subclass of the class game
+ * Implements the game logic
  */
-
-public class Game implements Runnable {
+public class WheelOfFortune extends Game {
 
     private static final int MAX_NUM_OF_PLAYERS = 3;
-    private final Server server;
     private final List<String> gameQuotes;
     private volatile List<PlayerHandler> listOfPlayers;
     private final ExecutorService service;
@@ -47,8 +48,12 @@ public class Game implements Runnable {
     private final Set<String> playerLetters;
     private Wheel wheel;
 
-    public Game(Server server) {
-        this.server = server;
+    /**
+     * Constructor method
+     * @param server is a instanced of server class
+     */
+    public WheelOfFortune(Server server) {
+        super(server, GameType.WHEEL_OF_FORTUNE);
         service = Executors.newFixedThreadPool(MAX_NUM_OF_PLAYERS);
         listOfPlayers = new ArrayList<>();
         gameQuotes = new ArrayList<>();
@@ -59,7 +64,7 @@ public class Game implements Runnable {
     }
 
     /**
-     * Starts the game and creates a new wheel all the time that a new game starts.
+     * Starts the game and creates a new wheel whenever a new game is started.
      * Ensures that the game remains active as long as there is a started Game.
      */
     @Override
@@ -78,7 +83,6 @@ public class Game implements Runnable {
                     System.out.println(e.getMessage());
                     endGame();
                 }
-
             }
         }
         endGame();
@@ -90,6 +94,7 @@ public class Game implements Runnable {
      *
      * @return returns true if there is a game that can accept a player false if is full or the game has already started
      */
+    @Override
     public boolean isAcceptingPlayers() {
         return listOfPlayers.size() < MAX_NUM_OF_PLAYERS && !isGameStarted;
     }
@@ -99,6 +104,7 @@ public class Game implements Runnable {
      *
      * @param playerSocket the socket from the client that connected
      */
+    @Override
     public void acceptPlayer(Socket playerSocket) {
         service.submit(new PlayerHandler(playerSocket));
     }
@@ -139,8 +145,8 @@ public class Game implements Runnable {
     /**
      * Go through the listOfPlayers and check if the player has not left the game.
      * Informs all players when it is their turn and which player is playing.
-     * Initiates the spinWheel method and send a message to all players with the results of the wheel in each turn
-     * Send to the players the quote actualized with the found char in each turn
+     * Initiates the spinWheel method and send a message to all players with the results
+     * Send to the players the quote actualized in each turn
      * Informs all the players the cash of each player.
      * Check if the game is ended.
      * @throws NoWheelException when no wheel was created before invoking spinWheel() method
@@ -222,7 +228,7 @@ public class Game implements Runnable {
     /**
      * Stores the letters that was chosen by players in playerLetters
      *
-     * @param letter is the letter chosen by player in game in each turn
+     * @param letter is the letter chosen by player in his/her turn
      */
     public void addPlayerLetters(String letter) {
         this.playerLetters.add(letter);
@@ -301,12 +307,7 @@ public class Game implements Runnable {
         isGameEnded = true;
     }
 
-    /**
-     * Removes the game from server
-     */
-    public void removeFromServerList() {
-        server.removeGameFromList(this);
-    }
+
 
     /**
      *

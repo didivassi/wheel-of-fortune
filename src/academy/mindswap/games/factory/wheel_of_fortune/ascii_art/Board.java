@@ -7,7 +7,7 @@
  * This software was produced to become our first group project.
  */
 
-package academy.mindswap.game.ascii_art;
+package academy.mindswap.games.factory.wheel_of_fortune.ascii_art;
 
 import java.util.*;
 

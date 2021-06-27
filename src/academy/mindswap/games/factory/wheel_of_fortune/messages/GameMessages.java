@@ -7,7 +7,7 @@
  * This software was produced to become our first group project.
  */
 
-package academy.mindswap.game.messages;
+package academy.mindswap.games.factory.wheel_of_fortune.messages;
 
 /**
  * Messages sent to playerClient by the game

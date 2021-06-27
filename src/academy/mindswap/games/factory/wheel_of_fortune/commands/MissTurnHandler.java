@@ -7,10 +7,11 @@
  * This software was produced to become our first group project.
  */
 
-package academy.mindswap.game.commands;
+package academy.mindswap.games.factory.wheel_of_fortune.commands;
 
-import academy.mindswap.game.Game;
-import static academy.mindswap.game.messages.GameMessages.*;
+import academy.mindswap.games.factory.wheel_of_fortune.WheelOfFortune;
+
+import static academy.mindswap.games.factory.wheel_of_fortune.messages.GameMessages.*;
 /**
  * If the spin lands miss turn the player will not play and the game move to the next player
  */
@@ -22,7 +23,7 @@ public class MissTurnHandler implements CommandHandler{
      * @param playerHandler to access the properties and methods of player
      */
     @Override
-    public void execute(Game game, Game.PlayerHandler playerHandler) {
+    public void execute(WheelOfFortune game, WheelOfFortune.PlayerHandler playerHandler) {
         game.broadcast(String.format(MISS_TURN,playerHandler.getName()));
     }
 }

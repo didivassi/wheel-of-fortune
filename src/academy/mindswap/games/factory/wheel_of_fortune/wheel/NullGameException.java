@@ -1,4 +1,4 @@
-package academy.mindswap.game.wheel;
+package academy.mindswap.games.factory.wheel_of_fortune.wheel;
 
 public class NullGameException extends Exception{
     public NullGameException() {
