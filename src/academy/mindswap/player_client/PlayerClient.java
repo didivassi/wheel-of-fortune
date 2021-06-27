@@ -96,7 +96,6 @@ public class PlayerClient {
      */
     public void startPlay(InetAddress host, int port) throws IOException {
         playerSocket = new Socket(host, port);
-        //playerSocket = new Socket("2.tcp.ngrok.io", 19315);
         new Thread(new SendMessages()).start();
         receiveMessageGame();
     }
