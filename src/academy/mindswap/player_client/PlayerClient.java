@@ -9,46 +9,95 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.net.UnknownHostException;
 
 
 public class PlayerClient {
     private Socket playerSocket;
     public boolean isPlayerTurn;
 
+    /**
+     * Constructor method to initialize the properties
+     */
     public PlayerClient() {
         this.playerSocket = null;
         isPlayerTurn = false;
     }
 
     /**
-     * Main method of the class Player
-     * Accepts a port as an argument. If no port is provided the default is 8080
-     * @param args
+     * Main method of the class PlayerClient
+     * Accepts a server address and a port as an argument.
+     * If no address is provided the default is localhost
+     * If no port is provided the default is 8080
+     * Example: java PlayerClient www.server.com 8080
+     * @param args the address and the port to start the playerClient
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws UnknownHostException {
         PlayerClient playerClient = new PlayerClient();
+        InetAddress host = playerClient.getServerHost(args);
+        int port = playerClient.getServerPort(args);
         try {
-            playerClient.startPlay();
+            playerClient.startPlay(host, port);
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println(NOT_CONNECT_SERVER);;
         }
+    }
+
+    /**
+     * Parses the args given to main method.
+     * @param args the arguments provided to main method
+     * @return localhost if bo host was provided to main, otherwise uses the provided host
+     * @throws UnknownHostException
+     */
+    private InetAddress getServerHost(String[] args) throws UnknownHostException {
+        InetAddress host = InetAddress.getLocalHost();
+        try {
+            if (args.length>0) {
+                host = InetAddress.getByName(args[0]);
+            }
+        }catch (NumberFormatException e) {
+            System.out.println(NOT_VALID_HOST);
+            System.exit(1);
+        }
+        return host;
+    }
+
+    /**
+     * Parses the args given to main method.
+     * @param args the arguments provided to main method
+     * @return port 8080 if no port was provided to main, otherwise uses the provided port
+     */
+    private int getServerPort(String[] args) {
+        int port = 8080;
+        try {
+            if (args.length>0) {
+                port = Integer.parseInt(args[1]);
+            }
+        }catch (NumberFormatException e) {
+            System.out.println(NOT_VALID_PORT);
+            System.exit(1);
+        }
+        return port;
     }
 
     /**
      * Starts the player in specified port
      * Create a new thread to send messages to game
-     * @throws IOException
+     * @throws IOException when it's not possible to connect to the server
      */
-    public void startPlay() throws IOException {
-        playerSocket = new Socket(InetAddress.getLocalHost(), 8080);
+    public void startPlay(InetAddress host, int port) throws IOException {
+        playerSocket = new Socket(host, port);
         //playerSocket = new Socket("2.tcp.ngrok.io", 19315);
         new Thread(new SendMessages()).start();
         receiveMessageGame();
     }
 
     /**
-     *
-     * @throws IOException
+     * Read the message from de game
+     * Read and print in console the message from game
+     * Check if the message sent have the char with the command for player answer
+     * In case of message have the command to player talk this is removed from the message before print in console
+     * @throws IOException If socket client closed throws quit
      */
     public void receiveMessageGame() throws IOException {
         BufferedReader in = new BufferedReader(new InputStreamReader(playerSocket.getInputStream()));
@@ -69,22 +118,19 @@ public class PlayerClient {
                     if(!isPlayerTurn){
                         System.out.print(command);
                     }
-                    command.delete(0, command.length());
+                    command.delete(0, command.length()); //delete the message in memory
                 }
             }else {
                 System.out.print(letter);
             }
-
-
-
         }
         quit();
     }
 
     /**
-     *
-     * @param letter
-     * @return
+     * Check if letter character is "/"
+     * @param letter the character that is going to be tested
+     * @return true if the letter is "/" otherwise false
      */
     private boolean checkCommandStart(char letter) {
         return (letter == "/".charAt(0));
@@ -92,7 +138,6 @@ public class PlayerClient {
 
     /**
      * Checks if building command
-     *
      * @param letter the character that is going to be tested
      * @return true if is a character false if is newline \n or carriage-return \r\n
      */
@@ -101,16 +146,16 @@ public class PlayerClient {
     }
 
     /**
-     *
-     * @param command
-     * @return
+     * Check if the player can talk
+     * @param command the string that will be compare
+     * @return true if can talk otherwise false
      */
     private boolean canTalk(String command) {
         return command.equalsIgnoreCase(PERMISSION_TO_TALK);
     }
 
     /**
-     *
+     * After the server close the socket, the player socket will close and left the game
      */
     private void quit(){
         System.out.println(SERVER_CLOSE);
@@ -130,7 +175,7 @@ public class PlayerClient {
      */
     private class SendMessages implements Runnable {
         /**
-         * Read the input in console from the player
+         * Read the input in console from the player if the player have permission to talk
          */
         @Override
         public void run() {
