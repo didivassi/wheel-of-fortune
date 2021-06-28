@@ -126,7 +126,7 @@ public class WheelOfFortune extends Game {
     private synchronized boolean checkIfGameCanStart() {
         return !isAcceptingPlayers()
                 && listOfPlayers.stream().filter(p -> !p.hasLeft)
-                .noneMatch(playerHandler -> playerHandler.getName() == null);
+                .noneMatch(playerHandler -> playerHandler.getName() == "");
     }
 
     /**
@@ -351,7 +351,7 @@ public class WheelOfFortune extends Game {
 
             send(GameMessages.ASK_NAME);
             name = getAnswer();
-            while (!name.matches("[a-zA-Z]")){
+            while (!name.matches("[a-zA-Z]+")){
                 send(GameMessages.ASK_NAME);
                 name = getAnswer();
             }
