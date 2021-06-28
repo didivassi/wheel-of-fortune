@@ -220,8 +220,10 @@ public class MoneyHandler implements CommandHandler {
         }
         if (checkIfPlayerGuessedQuote(answer)) {
             Arrays.stream(game.getQuoteToGuess().split("")).forEach(game::addPlayerLetters);
+            playerHandler.addCash(WINNER_BONUS);
+            game.broadcast(game.drawBoard());
             game.broadcast(BIG_WINNER);
-            game.broadcast(String.format(GameMessages.PLAYER_WON,playerHandler.getName(),playerHandler.getPlayerCash()+WINNER_BONUS,answer));
+            game.broadcast(String.format(GameMessages.PLAYER_WON,playerHandler.getName(),playerHandler.getPlayerCash(),answer));
             game.endGame();
             return;
         }
