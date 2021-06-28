@@ -219,7 +219,9 @@ public class MoneyHandler implements CommandHandler {
             return;
         }
         if (checkIfPlayerGuessedQuote(answer)) {
-            Arrays.stream(game.getQuoteToGuess().split("")).forEach(game::addPlayerLetters);
+            Arrays.stream(game.getQuoteToGuess().split(""))
+                    .filter(l -> l.matches("[a-z]"))
+                    .forEach(game::addPlayerLetters);
             playerHandler.addCash(WINNER_BONUS);
             game.broadcast(game.drawBoard());
             game.broadcast(BIG_WINNER);
