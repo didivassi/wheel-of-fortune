@@ -48,6 +48,6 @@ Instructions to run:
 
     Compile the server and run it;
     Compile the playerClient and run it 3 times;
-    Enjoy the game ;) 
+    Enjoy plesase the game ;) 
 
 
